@@ -4,4 +4,7 @@ class AppConstants {
 
   /// Hive box name for expenses.
   static const String expenseBoxName = 'expenses';
+
+  /// Default monthly budget (VND) for budget bar percentage.
+  static const int defaultMonthlyBudget = 1_000_000;
 }

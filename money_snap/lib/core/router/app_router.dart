@@ -1,10 +1,11 @@
 import 'package:go_router/go_router.dart';
 
 import '../di/injection.dart';
-import '../../features/expense/presentation/screens/add_expense_screen.dart';
+import '../../features/expense/presentation/screens/capture_expense_screen.dart';
 import '../../features/expense/presentation/screens/expense_calendar_screen.dart';
 import '../../features/expense/presentation/screens/expense_day_detail_screen.dart';
-import '../../features/expense/presentation/screens/expense_list_screen.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/settings/presentation/screens/settings_screen.dart';
 
 /// App route paths.
 class AppRoutes {
@@ -12,8 +13,11 @@ class AppRoutes {
   static const String add = '/add';
   static const String calendar = '/calendar';
   static const String day = '/day';
+  static const String settings = '/settings';
 
   static String dayPath(int year, int month, int day) => '/day/$year/$month/$day';
+  static String addForDate(int year, int month, int day) =>
+      '$add?date=${DateTime(year, month, day).toIso8601String()}';
 }
 
 final GoRouter appRouter = GoRouter(
@@ -22,17 +26,22 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.list,
       name: 'list',
-      builder: (context, state) => ExpenseListScreen(
+      builder: (context, state) => HomeScreen(
         store: Injection.expenseStore,
       ),
     ),
     GoRoute(
       path: AppRoutes.add,
       name: 'add',
-      builder: (context, state) => AddExpenseScreen(
-        store: Injection.expenseStore,
-        onSaved: () => context.pop(),
-      ),
+      builder: (context, state) {
+        final dateParam = state.uri.queryParameters['date'];
+        final initialDate = dateParam != null ? DateTime.tryParse(dateParam) : null;
+        return CaptureExpenseScreen(
+          store: Injection.expenseStore,
+          onSaved: () => context.pop(),
+          initialDate: initialDate,
+        );
+      },
     ),
     GoRoute(
       path: AppRoutes.calendar,
@@ -40,6 +49,11 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => ExpenseCalendarScreen(
         store: Injection.expenseStore,
       ),
+    ),
+    GoRoute(
+      path: AppRoutes.settings,
+      name: 'settings',
+      builder: (context, state) => const SettingsScreen(),
     ),
     GoRoute(
       path: '${AppRoutes.day}/:year/:month/:day',

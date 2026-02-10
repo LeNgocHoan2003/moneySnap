@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/expense.dart';
 import '../../../../core/utils/date_utils.dart' as app_utils;
 import 'expense_list_item.dart';
@@ -56,7 +57,9 @@ class ExpenseMonthSection extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                '${expenses.length} expense${expenses.length == 1 ? '' : 's'}',
+                expenses.length == 1
+                    ? context.t.expenseExpenseCount(count: 1)
+                    : context.t.expenseExpenseCountPlural(count: expenses.length),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),

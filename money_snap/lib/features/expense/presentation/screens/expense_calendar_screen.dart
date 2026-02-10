@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/expense.dart';
 import '../stores/expense_store.dart';
 import '../widgets/expense_calendar_day_cell.dart';
@@ -18,7 +19,6 @@ class ExpenseCalendarScreen extends StatelessWidget {
 
   final ExpenseStore store;
 
-  static const List<String> _weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   /// Groups expenses by (year, month, day). Key = year*10000 + month*100 + day.
   static Map<int, List<Expense>> _groupByDay(List<Expense> expenses) {
@@ -61,6 +61,16 @@ class ExpenseCalendarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
+    final weekDays = [
+      t.commonWeekdayMon,
+      t.commonWeekdayTue,
+      t.commonWeekdayWed,
+      t.commonWeekdayThu,
+      t.commonWeekdayFri,
+      t.commonWeekdaySat,
+      t.commonWeekdaySun,
+    ];
     return Scaffold(
       backgroundColor: AppColors.surface,
       appBar: AppBar(
@@ -95,7 +105,7 @@ class ExpenseCalendarScreen extends StatelessWidget {
                     (i) => Expanded(
                       child: Center(
                         child: Text(
-                          _weekDays[i],
+                          weekDays[i],
                           style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                 color: AppColors.textSecondary,
                                 fontWeight: FontWeight.w600,

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/date_utils.dart' as app_utils;
+import '../../../../core/utils/money_utils.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/expense.dart';
 
 /// Calendar-style card: day in month, picture thumbnail, money (description).
@@ -21,6 +23,8 @@ class ExpenseListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final day = expense.date.day;
     final hasImage = expense.imagePath.isNotEmpty;
+
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -66,27 +70,34 @@ class ExpenseListItem extends StatelessWidget {
                       : Container(
                           width: 56,
                           height: 56,
-                          color: AppColors.surfaceVariant,
-                          child: Icon(Icons.receipt_long, color: AppColors.textSecondary),
+                          color: colorScheme.surfaceVariant,
+                          child: Icon(
+                            Icons.receipt_long,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                         ),
                 ),
               ),
               const SizedBox(width: 12),
-              // Money spent (description as number)
+              // Money spent (amount when set, else legacy description as number)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      expense.description.isEmpty ? '—' : expense.description,
+                      expense.amount > 0
+                          ? MoneyUtils.formatVietnamese(expense.amount)
+                          : (expense.description.isEmpty ? '—' : expense.description),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      app_utils.AppDateUtils.formatDate(expense.date),
+                      expense.description.isNotEmpty && expense.amount > 0
+                          ? expense.description
+                          : app_utils.AppDateUtils.formatDate(expense.date),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -127,7 +138,7 @@ class ExpenseListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Day ${expense.date.day} · ${expense.description}',
+                    context.t.expenseDayDescription(day: expense.date.day, description: expense.description),
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                   IconButton(
@@ -149,19 +160,20 @@ class ExpenseListItem extends StatelessWidget {
   }
 
   Future<void> _confirmDelete(BuildContext context) async {
+    final t = context.t;
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete'),
-        content: const Text('Remove this expense?'),
+        title: Text(t.commonDelete),
+        content: Text(t.expenseRemoveExpenseConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(t.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+            child: Text(t.commonDelete),
           ),
         ],
       ),

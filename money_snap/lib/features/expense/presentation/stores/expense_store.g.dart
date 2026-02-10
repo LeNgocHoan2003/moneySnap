@@ -1,6 +1,4 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// Run: dart run build_runner build --delete-conflicting-outputs
-// ignore_for_file: non_constant_identifier_names
 
 part of 'expense_store.dart';
 
@@ -8,8 +6,11 @@ part of 'expense_store.dart';
 // StoreGenerator
 // **************************************************************************
 
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
+
 mixin _$ExpenseStore on _ExpenseStore, Store {
-  late final _$expensesAtom = Atom(name: '_ExpenseStore.expenses');
+  late final _$expensesAtom =
+      Atom(name: '_ExpenseStore.expenses', context: context);
 
   @override
   ObservableList<Expense> get expenses {
@@ -24,7 +25,8 @@ mixin _$ExpenseStore on _ExpenseStore, Store {
     });
   }
 
-  late final _$isLoadingAtom = Atom(name: '_ExpenseStore.isLoading');
+  late final _$isLoadingAtom =
+      Atom(name: '_ExpenseStore.isLoading', context: context);
 
   @override
   bool get isLoading {
@@ -39,24 +41,35 @@ mixin _$ExpenseStore on _ExpenseStore, Store {
     });
   }
 
-  late final _$_addExpenseAsyncAction = AsyncAction('_ExpenseStore.addExpense');
+  late final _$addExpenseAsyncAction =
+      AsyncAction('_ExpenseStore.addExpense', context: context);
 
   @override
   Future<void> addExpense(Expense expense) {
-    return _$_addExpenseAsyncAction.run(() => super.addExpense(expense));
+    return _$addExpenseAsyncAction.run(() => super.addExpense(expense));
   }
 
-  late final _$_loadExpensesAsyncAction = AsyncAction('_ExpenseStore.loadExpenses');
+  late final _$loadExpensesAsyncAction =
+      AsyncAction('_ExpenseStore.loadExpenses', context: context);
 
   @override
   Future<void> loadExpenses() {
-    return _$_loadExpensesAsyncAction.run(() => super.loadExpenses());
+    return _$loadExpensesAsyncAction.run(() => super.loadExpenses());
   }
 
-  late final _$_deleteExpenseAsyncAction = AsyncAction('_ExpenseStore.deleteExpense');
+  late final _$deleteExpenseAsyncAction =
+      AsyncAction('_ExpenseStore.deleteExpense', context: context);
 
   @override
   Future<void> deleteExpense(String id) {
-    return _$_deleteExpenseAsyncAction.run(() => super.deleteExpense(id));
+    return _$deleteExpenseAsyncAction.run(() => super.deleteExpense(id));
+  }
+
+  @override
+  String toString() {
+    return '''
+expenses: ${expenses},
+isLoading: ${isLoading}
+    ''';
   }
 }

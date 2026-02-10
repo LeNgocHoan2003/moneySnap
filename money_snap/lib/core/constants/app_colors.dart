@@ -40,4 +40,7 @@ class AppColors {
 
   // Utility
   static const transparent = Color(0x00000000);
+
+  /// Light primary tint for today/highlighted calendar cell.
+  static const todayHighlight = Color(0x1F2D5BFF);
 }

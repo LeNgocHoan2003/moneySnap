@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/money_utils.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/expense.dart';
 import '../stores/expense_store.dart';
 
@@ -41,18 +43,20 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   Future<void> _save() async {
     if (_imagePath == null || _imagePath!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Take one picture first')),
+        SnackBar(content: Text(context.t.expenseTakeOnePictureFirst)),
       );
       return;
     }
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
     try {
+      final amount = MoneyUtils.parseAmount(_descriptionController.text);
       final expense = Expense(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         imagePath: _imagePath!,
         description: _descriptionController.text,
         date: DateTime.now(),
+        amount: amount,
       );
       await widget.store.addExpense(expense);
       if (mounted) {
@@ -71,8 +75,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Expense')),
+      appBar: AppBar(title: Text(context.t.expenseAddExpense)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -84,7 +90,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               child: Container(
                 height: 160,
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceVariant,
+                  color: colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: _imagePath != null
@@ -101,7 +107,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                             child: IconButton.filled(
                               icon: const Icon(Icons.camera_alt),
                               onPressed: _pickImage,
-                              tooltip: 'Replace picture',
+                              tooltip: context.t.expenseReplacePicture,
                             ),
                           ),
                         ],
@@ -110,9 +116,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.camera_alt, size: 48, color: AppColors.textSecondary),
+                              Icon(Icons.camera_alt, size: 48, color: colorScheme.onSurfaceVariant),
                             const SizedBox(height: 8),
-                            Text('Tap to take 1 picture', style: TextStyle(color: AppColors.textSecondary)),
+                              Text(
+                                context.t.expenseTapToTakePicture,
+                                style: TextStyle(color: colorScheme.onSurfaceVariant),
+                              ),
                           ],
                         ),
                       ),
@@ -123,21 +132,22 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               controller: _descriptionController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                border: OutlineInputBorder(),
-                hintText: 'Numbers only',
+              decoration: InputDecoration(
+                labelText: context.t.expenseDescription,
+                border: const OutlineInputBorder(),
+                hintText: context.t.expenseNumbersOnly,
               ),
               validator: (v) {
-                if (v == null || v.isEmpty) return 'Enter description';
-                if (!RegExp(r'^\d+$').hasMatch(v)) return 'Numbers only';
+                final t = context.t;
+                if (v == null || v.isEmpty) return t.errorsEnterDescription;
+                if (!RegExp(r'^\d+$').hasMatch(v)) return t.expenseNumbersOnly;
                 return null;
               },
             ),
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _saving ? null : _save,
-              child: _saving ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Save'),
+              child: _saving ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Text(context.t.commonSave),
             ),
           ],
         ),
