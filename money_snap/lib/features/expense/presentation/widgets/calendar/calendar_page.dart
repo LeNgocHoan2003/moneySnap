@@ -52,6 +52,7 @@ class _CalendarPageState extends State<CalendarPage> {
         if (widget.store.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
+        // Only rebuild when expenses or calendar view changes
         final cells = CalendarStoreUtils.buildMonthCells(
           _calendarStore.viewYear,
           _calendarStore.viewMonth,
@@ -62,21 +63,23 @@ class _CalendarPageState extends State<CalendarPage> {
           decoration: BoxDecoration(
             color: colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: AppColors.overlayLight,
                 blurRadius: 8,
-                offset: const Offset(0, 2),
+                offset: Offset(0, 2),
               ),
             ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              MonthHeader(
-                monthDate: DateTime(_calendarStore.viewYear, _calendarStore.viewMonth),
-                onPrevMonth: _calendarStore.prevMonth,
-                onNextMonth: _calendarStore.nextMonth,
+              Observer(
+                builder: (_) => MonthHeader(
+                  monthDate: DateTime(_calendarStore.viewYear, _calendarStore.viewMonth),
+                  onPrevMonth: _calendarStore.prevMonth,
+                  onNextMonth: _calendarStore.nextMonth,
+                ),
               ),
               const WeekdayRow(),
               const SizedBox(height: AppSpacing.sm),

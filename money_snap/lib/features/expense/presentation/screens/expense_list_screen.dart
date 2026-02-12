@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
-import 'package:money_snap/gen/assets.gen.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../../domain/entities/expense.dart';
 import '../stores/expense_store.dart';
@@ -62,6 +59,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Widget _buildCalendarBody(BuildContext context) {
     return Observer(
       builder: (_) {
+        // Only rebuild when expenses change
         final monthExpenses = _expensesForMonth(widget.store.expenses);
         return RefreshIndicator(
           onRefresh: widget.store.loadExpenses,
@@ -70,12 +68,16 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ExpenseSummaryCard(
-                  monthDate: DateTime(
-                    _calendarStore.viewYear,
-                    _calendarStore.viewMonth,
+                Observer(
+                  builder: (_) => RepaintBoundary(
+                    child: ExpenseSummaryCard(
+                      monthDate: DateTime(
+                        _calendarStore.viewYear,
+                        _calendarStore.viewMonth,
+                      ),
+                      expenses: monthExpenses,
+                    ),
                   ),
-                  expenses: monthExpenses,
                 ),
                 CalendarPage(
                   store: widget.store,

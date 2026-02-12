@@ -48,14 +48,16 @@ class CalendarGrid extends StatelessWidget {
         itemBuilder: (context, index) {
           final cell = cells[index];
           final isToday = _isToday(cell.day);
-          return DayCell(
-            day: cell.day,
-            expenses: cell.expenses,
-            isToday: isToday,
-            isSelected: isToday,
-            onTap: cell.day == 0
-                ? null
-                : () => onDayTap(viewYear, viewMonth, cell.day, cell.expenses.isNotEmpty),
+          return RepaintBoundary(
+            child: DayCell(
+              day: cell.day,
+              expenses: cell.expenses,
+              isToday: isToday,
+              isSelected: isToday,
+              onTap: cell.day == 0
+                  ? null
+                  : () => onDayTap(viewYear, viewMonth, cell.day, cell.expenses.isNotEmpty),
+            ),
           );
         },
       ),

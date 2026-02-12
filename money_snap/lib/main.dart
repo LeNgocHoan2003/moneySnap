@@ -20,20 +20,21 @@ void main() async {
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
+  // Cache ColorSchemes to avoid recalculating on every rebuild
+  static final _lightColorScheme = ColorScheme.fromSeed(
+    seedColor: AppColors.primary,
+    brightness: Brightness.light,
+  );
+  static final _darkColorScheme = ColorScheme.fromSeed(
+    seedColor: AppColors.primary,
+    brightness: Brightness.dark,
+  );
+
   @override
   Widget build(BuildContext context) {
     return TranslationProvider(
       child: Builder(
         builder: (context) {
-          final lightColorScheme = ColorScheme.fromSeed(
-            seedColor: AppColors.primary,
-            brightness: Brightness.light,
-          );
-          final darkColorScheme = ColorScheme.fromSeed(
-            seedColor: AppColors.primary,
-            brightness: Brightness.dark,
-          );
-
           return ValueListenableBuilder<ThemeMode>(
             valueListenable: ThemeController.instance.themeMode,
             builder: (context, themeMode, _) {
@@ -41,12 +42,12 @@ class MainApp extends StatelessWidget {
                 title: context.t.appTitle,
                 themeMode: themeMode,
                 theme: ThemeData(
-                  colorScheme: lightColorScheme,
+                  colorScheme: _lightColorScheme,
                   useMaterial3: true,
                   textTheme: GoogleFonts.openSansTextTheme(),
                 ),
                 darkTheme: ThemeData(
-                  colorScheme: darkColorScheme,
+                  colorScheme: _darkColorScheme,
                   useMaterial3: true,
                   textTheme: GoogleFonts.openSansTextTheme(ThemeData.dark().textTheme),
                 ),

@@ -43,7 +43,7 @@ class ExpenseCalendarDayCell extends StatelessWidget {
     final firstImage = hasExpenses && expenses.first.imagePath.isNotEmpty
         ? expenses.first.imagePath
         : null;
-    final fileExists = firstImage != null && File(firstImage).existsSync();
+    // Removed synchronous file check - Image.file handles missing files gracefully
 
     // 2. Ngày không có chi tiêu: Hiển thị đơn giản
     if (!hasExpenses) {
@@ -99,10 +99,25 @@ class ExpenseCalendarDayCell extends StatelessWidget {
               fit: StackFit.expand, // Quan trọng: Để ảnh chiếm full không gian
               children: [
                 // --- LAYER 1: HÌNH ẢNH NỀN ---
-                if (fileExists)
+                if (firstImage != null && firstImage!.isNotEmpty)
                   Image.file(
                     File(firstImage),
                     fit: BoxFit.cover,
+                    // Calendar cells are small, use 2x for retina displays
+                    cacheWidth: 200,
+                    cacheHeight: 200,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: AppColors.surface,
+                        child: Center(
+                          child: Icon(
+                            Icons.receipt_long,
+                            size: 24,
+                            color: AppColors.textSecondary.withOpacity(0.5),
+                          ),
+                        ),
+                      );
+                    },
                   )
                 else
                   // Nếu không có file ảnh thực tế, hiện icon mờ
@@ -118,7 +133,7 @@ class ExpenseCalendarDayCell extends StatelessWidget {
                   ),
 
                 // Một lớp overlay đen mờ nhẹ ở dưới đáy để làm nổi bật số tiền (tùy chọn)
-                if (fileExists)
+                if (firstImage != null && firstImage!.isNotEmpty)
                   Positioned(
                     bottom: 0,
                     left: 0,

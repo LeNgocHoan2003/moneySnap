@@ -1,5 +1,5 @@
 name: money_snap
-description: "A new Flutter project."
+description: "Money Snap - Track your expenses by capturing receipts"
 publish_to: 'none'
 version: 0.1.0
 
@@ -26,6 +26,7 @@ dependencies:
   slang_flutter: ^4.12.1
   flutter_svg: ^2.0.10
   google_fonts: ^6.2.1
+
 
 
 dev_dependencies:

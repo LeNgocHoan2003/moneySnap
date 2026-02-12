@@ -60,12 +60,25 @@ class ExpenseListItem extends StatelessWidget {
                 height: 56,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: hasImage && _fileExists(expense.imagePath)
+                  child: hasImage
                       ? Image.file(
                           File(expense.imagePath),
                           width: 56,
                           height: 56,
                           fit: BoxFit.cover,
+                          cacheWidth: 112, // 2x for retina displays
+                          cacheHeight: 112,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 56,
+                              height: 56,
+                              color: colorScheme.surfaceVariant,
+                              child: Icon(
+                                Icons.receipt_long,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            );
+                          },
                         )
                       : Container(
                           width: 56,
@@ -116,16 +129,10 @@ class ExpenseListItem extends StatelessWidget {
     );
   }
 
-  bool _fileExists(String path) {
-    try {
-      return path.isNotEmpty && File(path).existsSync();
-    } catch (_) {
-      return false;
-    }
-  }
+  // Removed synchronous file check - Image.file handles missing files gracefully
 
   void _showDetail(BuildContext context) {
-    if (expense.imagePath.isEmpty || !_fileExists(expense.imagePath)) return;
+    if (expense.imagePath.isEmpty) return;
     showDialog<void>(
       context: context,
       builder: (ctx) => Dialog(
@@ -150,7 +157,12 @@ class ExpenseListItem extends StatelessWidget {
             ),
             Flexible(
               child: InteractiveViewer(
-                child: Image.file(File(expense.imagePath), fit: BoxFit.contain),
+                child: Image.file(
+                  File(expense.imagePath),
+                  fit: BoxFit.contain,
+                  // For full-screen view, use higher resolution but still limit to reasonable size
+                  cacheWidth: 2048,
+                ),
               ),
             ),
           ],

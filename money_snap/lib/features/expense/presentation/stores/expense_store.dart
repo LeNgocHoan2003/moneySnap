@@ -53,4 +53,17 @@ abstract class _ExpenseStore with Store {
     await _deleteExpenseUseCase(id);
     expenses.removeWhere((e) => e.id == id);
   }
+
+  @action
+  Future<void> updateExpense(Expense expense) async {
+    await _addExpenseUseCase(expense);
+    // Update the local observable list directly for better performance
+    final index = expenses.indexWhere((e) => e.id == expense.id);
+    if (index != -1) {
+      expenses[index] = expense;
+    } else {
+      // If expense not found locally, reload all expenses
+      await loadExpenses();
+    }
+  }
 }

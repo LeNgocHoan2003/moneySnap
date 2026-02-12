@@ -33,9 +33,15 @@ class DayCell extends StatelessWidget {
       return _EmptyCell();
     }
 
+    // Calculate net total: sum of all amounts (positive = income, negative = expense)
     final total = expenses.fold<int>(
       0,
-      (s, e) => s + (e.amount > 0 ? e.amount : MoneyUtils.parseAmount(e.description.isEmpty ? '' : e.description)),
+      (s, e) {
+        final amount = e.amount != 0 
+            ? e.amount 
+            : MoneyUtils.parseAmount(e.description.isEmpty ? '' : e.description);
+        return s + amount;
+      },
     );
     final hasExpenses = expenses.isNotEmpty;
     final firstImage = hasExpenses && expenses.first.imagePath.isNotEmpty
@@ -154,7 +160,6 @@ class _DayWithExpensesCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final hasImage = firstImagePath != null && firstImagePath!.isNotEmpty;
-    final fileExists = hasImage && File(firstImagePath!).existsSync();
     // Use scrim/shadow for image overlay so it adapts to light/dark theme.
     final overlay = colorScheme.shadow;
 
@@ -184,11 +189,26 @@ class _DayWithExpensesCell extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 // Background image: full width/height
-                if (fileExists)
+                if (hasImage)
                   Positioned.fill(
                     child: Image.file(
                       File(firstImagePath!),
                       fit: BoxFit.cover,
+                      // Calendar cells are small (~50-80px), use 2x for retina
+                      cacheWidth: 200,
+                      cacheHeight: 200,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: colorScheme.surfaceContainerHighest,
+                          child: Center(
+                            child: Icon(
+                              Icons.receipt_long,
+                              size: 24,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   )
                 else
@@ -204,23 +224,24 @@ class _DayWithExpensesCell extends StatelessWidget {
                       ),
                     ),
                   ),
-                // Dark overlay so text is readable
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          overlay.withOpacity(0.4),
-                          overlay.withOpacity(0.6),
-                        ],
+                // Dark overlay so text is readable (only when image exists)
+                if (hasImage)
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            overlay.withOpacity(0.4),
+                            overlay.withOpacity(0.6),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
                 // Day number (top-left)
                 Positioned(
                   top: AppSpacing.xs,
@@ -239,14 +260,17 @@ class _DayWithExpensesCell extends StatelessWidget {
                     right: AppSpacing.xs,
                     child: ExpandableImageBadge(count: expenses.length - 1),
                   ),
-                // Amount tag (bottom): compact format for small cell (e.g. -433K)
-                if (total > 0)
+                // Amount tag (bottom): green pill for positive (income), red pill for negative (expense)
+                if (total != 0)
                   Positioned(
                     left: AppSpacing.xs,
                     right: AppSpacing.xs,
                     bottom: AppSpacing.xs,
                     child: Center(
-                      child: ExpenseAmountTag(amount: total, compact: true),
+                      child: ExpenseAmountTag(
+                        amount: total,
+                        compact: true,
+                      ),
                     ),
                   ),
               ],

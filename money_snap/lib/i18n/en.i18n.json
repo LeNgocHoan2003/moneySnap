@@ -1,5 +1,5 @@
 {
-  "appTitle": "MoneySnap",
+  "appTitle": "Money Snap",
   "commonSave": "Save",
   "commonCancel": "Cancel",
   "commonClose": "Close",
@@ -80,5 +80,10 @@
   "expenseAmountHint": "0 đ",
   "expenseTransactionDate": "Transaction date",
   "expenseTapToChangeDate": "Tap to change",
-  "expenseTransactionTime": "Time"
+  "expenseTransactionTime": "Time",
+  "expenseEarned": "Earned",
+  "expenseSpent": "Spent",
+  "expenseEditExpense": "Edit Expense",
+  "expenseEditAmount": "Edit Amount",
+  "expenseEditTime": "Edit Time"
 }

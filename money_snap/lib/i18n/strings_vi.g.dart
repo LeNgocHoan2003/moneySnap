@@ -39,7 +39,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	TranslationsVi $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsVi(meta: meta ?? this.$meta);
 
 	// Translations
-	@override String get appTitle => 'MoneySnap';
+	@override String get appTitle => 'Money Snap';
 	@override String get commonSave => 'Lưu';
 	@override String get commonCancel => 'Hủy';
 	@override String get commonClose => 'Đóng';
@@ -121,6 +121,11 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get expenseTransactionDate => 'Ngày giao dịch';
 	@override String get expenseTapToChangeDate => 'Chạm để thay đổi';
 	@override String get expenseTransactionTime => 'Giờ';
+	@override String get expenseEarned => 'Thu nhập';
+	@override String get expenseSpent => 'Chi tiêu';
+	@override String get expenseEditExpense => 'Chỉnh sửa khoản chi';
+	@override String get expenseEditAmount => 'Chỉnh sửa số tiền';
+	@override String get expenseEditTime => 'Chỉnh sửa giờ';
 }
 
 /// The flat map containing all translations for locale <vi>.
@@ -131,7 +136,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 extension on TranslationsVi {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'appTitle' => 'MoneySnap',
+			'appTitle' => 'Money Snap',
 			'commonSave' => 'Lưu',
 			'commonCancel' => 'Hủy',
 			'commonClose' => 'Đóng',
@@ -213,6 +218,11 @@ extension on TranslationsVi {
 			'expenseTransactionDate' => 'Ngày giao dịch',
 			'expenseTapToChangeDate' => 'Chạm để thay đổi',
 			'expenseTransactionTime' => 'Giờ',
+			'expenseEarned' => 'Thu nhập',
+			'expenseSpent' => 'Chi tiêu',
+			'expenseEditExpense' => 'Chỉnh sửa khoản chi',
+			'expenseEditAmount' => 'Chỉnh sửa số tiền',
+			'expenseEditTime' => 'Chỉnh sửa giờ',
 			_ => null,
 		};
 	}

@@ -41,8 +41,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	// Translations
 
-	/// en: 'MoneySnap'
-	String get appTitle => 'MoneySnap';
+	/// en: 'Money Snap'
+	String get appTitle => 'Money Snap';
 
 	/// en: 'Save'
 	String get commonSave => 'Save';
@@ -286,6 +286,21 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Time'
 	String get expenseTransactionTime => 'Time';
+
+	/// en: 'Earned'
+	String get expenseEarned => 'Earned';
+
+	/// en: 'Spent'
+	String get expenseSpent => 'Spent';
+
+	/// en: 'Edit Expense'
+	String get expenseEditExpense => 'Edit Expense';
+
+	/// en: 'Edit Amount'
+	String get expenseEditAmount => 'Edit Amount';
+
+	/// en: 'Edit Time'
+	String get expenseEditTime => 'Edit Time';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -296,7 +311,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'appTitle' => 'MoneySnap',
+			'appTitle' => 'Money Snap',
 			'commonSave' => 'Save',
 			'commonCancel' => 'Cancel',
 			'commonClose' => 'Close',
@@ -378,6 +393,11 @@ extension on Translations {
 			'expenseTransactionDate' => 'Transaction date',
 			'expenseTapToChangeDate' => 'Tap to change',
 			'expenseTransactionTime' => 'Time',
+			'expenseEarned' => 'Earned',
+			'expenseSpent' => 'Spent',
+			'expenseEditExpense' => 'Edit Expense',
+			'expenseEditAmount' => 'Edit Amount',
+			'expenseEditTime' => 'Edit Time',
 			_ => null,
 		};
 	}

@@ -20,20 +20,34 @@ class ExpenseSummaryCard extends StatelessWidget {
   final List<Expense> expenses;
   final int monthlyBudget;
 
-  int get _totalAmount => expenses.fold<int>(
+  /// Calculate earned amount (sum of positive amounts)
+  int get _earnedAmount => expenses.fold<int>(
         0,
-        (s, e) => s + (e.amount > 0 ? e.amount : MoneyUtils.parseAmount(e.description)),
+        (s, e) {
+          final amount = e.amount != 0 ? e.amount : MoneyUtils.parseAmount(e.description);
+          return s + (amount > 0 ? amount : 0);
+        },
       );
 
-  double get _budgetPercent =>
-      monthlyBudget <= 0 ? 0.0 : (_totalAmount / monthlyBudget).clamp(0.0, 1.0);
+  /// Calculate spent amount (sum of negative amounts, as absolute value)
+  int get _spentAmount => expenses.fold<int>(
+        0,
+        (s, e) {
+          final amount = e.amount != 0 ? e.amount : MoneyUtils.parseAmount(e.description);
+          return s + (amount < 0 ? amount.abs() : 0);
+        },
+      );
+
+  /// Calculate total (net: earned - spent)
+  int get _totalAmount => _earnedAmount - _spentAmount;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final earned = _earnedAmount;
+    final spent = _spentAmount;
     final total = _totalAmount;
-    final percent = _budgetPercent;
     final count = expenses.length;
 
     return Container(
@@ -74,21 +88,78 @@ class ExpenseSummaryCard extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 12),
+                    // Earned row
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          MoneyUtils.formatSummaryAmount(total),
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.onSurface,
+                          context.t.expenseEarned,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                        ),
+                        Text(
+                          '+${MoneyUtils.formatSummaryAmount(earned)}',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.income,
                               ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 8),
+                    // Spent row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          context.t.expenseSpent,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                        ),
+                        Text(
+                          '-${MoneyUtils.formatSummaryAmount(spent)}',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.expense,
+                              ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    // Divider
+                    Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: AppColors.border,
+                    ),
+                    const SizedBox(height: 12),
+                    // Total row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          context.t.expenseTotal,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                              ),
+                        ),
+                        Text(
+                          '${total >= 0 ? '+' : ''}${MoneyUtils.formatSummaryAmount(total)}',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: total >= 0 ? AppColors.income : AppColors.expense,
+                              ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    // Transaction count
                     Text(
                       count == 1
                           ? context.t.expenseTransactionCount(count: 1)
@@ -97,29 +168,6 @@ class ExpenseSummaryCard extends StatelessWidget {
                             color: AppColors.textSecondary,
                           ),
                     ),
-                    const SizedBox(height: 10),
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //       child: ClipRRect(
-                    //         borderRadius: BorderRadius.circular(4),
-                    //         child: LinearProgressIndicator(
-                    //           value: percent,
-                    //           backgroundColor: AppColors.border,
-                    //           valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-                    //           minHeight: 6,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     const SizedBox(width: 8),
-                    //     Text(
-                    //       context.t.expensePercentOfBudget(percent: (percent * 100).round()),
-                    //       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    //             color: AppColors.textSecondary,
-                    //           ),
-                    //     ),
-                    //   ],
-                    // ),
                   ],
                 ),
               ),

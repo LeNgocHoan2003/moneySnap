@@ -25,7 +25,6 @@ class ExpenseThumbnail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasImage = imagePath != null && imagePath!.isNotEmpty;
-    final fileExists = hasImage && File(imagePath!).existsSync();
 
     return Stack(
       clipBehavior: Clip.none,
@@ -46,10 +45,22 @@ class ExpenseThumbnail extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(borderRadius),
-            child: fileExists
+            child: hasImage
                 ? Image.file(
                     File(imagePath!),
                     fit: BoxFit.cover,
+                    // Thumbnails are typically small, use appropriate cache size
+                    cacheWidth: 200,
+                    cacheHeight: 200,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Icon(
+                          Icons.receipt_long,
+                          size: 20,
+                          color: AppColors.textSecondary,
+                        ),
+                      );
+                    },
                   )
                 : Center(
                     child: Icon(

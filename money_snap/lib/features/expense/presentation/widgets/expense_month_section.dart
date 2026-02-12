@@ -67,18 +67,26 @@ class ExpenseMonthSection extends StatelessWidget {
             ],
           ),
         ),
-        // Show every day in the month: black placeholder if no data, expense card(s) if has data
-        for (int day = 1; day <= daysInMonth; day++) ...[
-          _DayRow(
-            year: year,
-            month: month,
-            day: day,
-            dayExpenses: byDay[day] ?? [],
-            isToday: _isToday(year, month, day),
-            onDelete: onDelete,
-            onDayTap: () => context.push(AppRoutes.dayPath(year, month, day)),
-          ),
-        ],
+        // Use ListView.builder for better performance with many days
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: daysInMonth,
+          itemBuilder: (context, index) {
+            final day = index + 1;
+            return RepaintBoundary(
+              child: _DayRow(
+                year: year,
+                month: month,
+                day: day,
+                dayExpenses: byDay[day] ?? [],
+                isToday: _isToday(year, month, day),
+                onDelete: onDelete,
+                onDayTap: () => context.push(AppRoutes.dayPath(year, month, day)),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -148,15 +156,24 @@ class _DayRow extends StatelessWidget {
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (final e in dayExpenses)
-          ExpenseListItem(
-            expense: e,
-            onDelete: () => onDelete(e),
+    // Use ListView.builder for better performance with multiple expenses per day
+    if (dayExpenses.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: dayExpenses.length,
+      itemBuilder: (context, index) {
+        final expense = dayExpenses[index];
+        return RepaintBoundary(
+          child: ExpenseListItem(
+            expense: expense,
+            onDelete: () => onDelete(expense),
           ),
-      ],
+        );
+      },
     );
   }
 }

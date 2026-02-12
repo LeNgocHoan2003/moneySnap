@@ -1,5 +1,5 @@
 {
-  "appTitle": "MoneySnap",
+  "appTitle": "Money Snap",
   "commonSave": "Lưu",
   "commonCancel": "Hủy",
   "commonClose": "Đóng",
@@ -80,5 +80,10 @@
   "expenseAmountHint": "0 đ",
   "expenseTransactionDate": "Ngày giao dịch",
   "expenseTapToChangeDate": "Chạm để thay đổi",
-  "expenseTransactionTime": "Giờ"
+  "expenseTransactionTime": "Giờ",
+  "expenseEarned": "Thu nhập",
+  "expenseSpent": "Chi tiêu",
+  "expenseEditExpense": "Chỉnh sửa khoản chi",
+  "expenseEditAmount": "Chỉnh sửa số tiền",
+  "expenseEditTime": "Chỉnh sửa giờ"
 }
