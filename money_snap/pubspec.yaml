@@ -21,18 +21,23 @@ dependencies:
   app_settings: ^7.0.0
   image: ^4.1.7
   path_provider: ^2.1.2
+  shared_preferences: ^2.2.2
   slang: ^4.12.1
   slang_flutter: ^4.12.1
   flutter_svg: ^2.0.10
+  google_fonts: ^6.2.1
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mocktail: ^1.0.4
   flutter_lints: ^5.0.0
   build_runner: ^2.4.8
   mobx_codegen: ^2.6.0
   hive_generator: ^2.0.1
+  flutter_native_splash: ^2.4.7
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -40,3 +45,16 @@ flutter:
 
   assets:
     - assets/icons/
+
+# Native splash screen using app logo.
+# Run: dart run flutter_native_splash:create
+# Note: image must be a real PNG file (not AVIF with .png extension).
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/icons/app_logo.png
+  android_12:
+    color: "#ffffff"
+    image: assets/icons/app_logo.png
+    icon_background_color: "#ffffff"
+
+# App icon: see flutter_launcher_icons.yaml. Run: dart run flutter_launcher_icons

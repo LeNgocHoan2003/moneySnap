@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:money_snap/i18n/strings.g.dart';
 
 import '../../../../gen/assets.gen.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -36,9 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: _selectedTab == _HomeTab.expenses
-            ? SvgPicture.asset(Assets.appName, width: 70, height: 70)
-            : const Text('Settings'),
+        title: Row(
+          children: [
+            Image.asset(Assets.appLogo, height: 36, fit: BoxFit.contain),
+            const SizedBox(width: 8),
+            Text(context.t.appTitle, style: theme.textTheme.titleLarge),
+          ],
+        )
+
       ),
       body: _buildBody(),
       bottomNavigationBar: Container(

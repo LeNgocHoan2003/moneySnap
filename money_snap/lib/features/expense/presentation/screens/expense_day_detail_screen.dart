@@ -1,8 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/date_utils.dart' as app_utils;
 import '../../../../i18n/strings.g.dart';
 import '../../../../core/utils/money_utils.dart';
@@ -34,16 +37,28 @@ class ExpenseDayDetailScreen extends StatelessWidget {
       (s, e) =>
           s + (e.amount > 0 ? e.amount : MoneyUtils.parseAmount(e.description)),
     );
+    // Month part: "February" (en) or "Tháng 2" (vi); year is last token.
+    final formatted = app_utils.AppDateUtils.formatMonthYearLocalized(date, context.t);
+    final parts = formatted.split(' ');
+    final monthPart = parts.length > 1 ? parts.sublist(0, parts.length - 1).join(' ') : formatted;
+    final titleText = '${date.day} $monthPart';
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          '${date.day} ${app_utils.AppDateUtils.formatMonthYear(date).split(' ').first}',
-        ),
+        title: Text(titleText),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: onBack,
         ),
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.add),
+        //     onPressed: () => context.push(
+        //       AppRoutes.addForDate(date.year, date.month, date.day),
+        //     ),
+        //     tooltip: context.t.expenseAddExpense,
+        //   ),
+        // ],
       ),
       body: expenses.isEmpty
           ? Center(
@@ -114,8 +129,7 @@ class ExpenseDayDetailScreen extends StatelessWidget {
                               top: 14,
                               left: 14,
                               // right: 14,
-                              child: (timeText != '00:00')
-                                  ? Container(
+                              child: Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 10,
                                         vertical: 4,
@@ -135,75 +149,61 @@ class ExpenseDayDetailScreen extends StatelessWidget {
                                             ),
                                       ),
                                     )
-                                  : const SizedBox.shrink(),
+                                  
                             ),
                             Positioned(
                               right: 14,
                               top: 14,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.background.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(999),
-                                ),
-                                child: IconButton(
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                  iconSize: 20,
-                                  splashRadius: 20,
-                                  icon: const Icon(Icons.delete_outline),
-                                  color: colorScheme.onSurfaceVariant,
-                                  onPressed: () async {
-                                    final t = context.t;
-                                    final ok = await showDialog<bool>(
+                              child: Tooltip(
+                                message: context.t.commonDelete,
+                                child: Material(
+                                  color: colorScheme.surface.withOpacity(0.92),
+                                  borderRadius: BorderRadius.circular(
+                                    AppSpacing.radiusXs,
+                                  ),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: InkWell(
+                                    onTap: () => _showDeleteConfirm(
                                       context: context,
-                                      builder: (ctx) => AlertDialog(
-                                        title: Text(t.commonDelete),
-                                        content: Text(
-                                          t.expenseRemoveExpenseConfirm,
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(ctx, false),
-                                            child: Text(t.commonCancel),
-                                          ),
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(ctx, true),
-                                            child: Text(t.commonDelete),
-                                          ),
-                                        ],
+                                      store: store,
+                                      expenseId: e.id,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(
+                                        AppSpacing.sm,
                                       ),
-                                    );
-                                    if (ok == true) {
-                                      await store.deleteExpense(e.id);
-                                      if (context.mounted)
-                                        Navigator.of(context).pop();
-                                    }
-                                  },
+                                      child: Icon(
+                                        Icons.delete_outline_rounded,
+                                        size: 20,
+                                        color: AppColors.expense,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                            Positioned(
-                              
-                              right: 14,
-                              bottom: 14,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.expense.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(999),
-                                ),
-                                child: Text(
-                                  MoneyUtils.formatVietnamese(amount),
-                                  style: theme.textTheme.titleLarge
-                                      ?.copyWith(
-                                        color: AppColors.expense,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 14),
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.expense.withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: Text(
+                                    MoneyUtils.formatVietnamese(amount),
+                                    style: theme.textTheme.titleLarge
+                                        ?.copyWith(
+                                          color: AppColors.textLight,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -215,6 +215,83 @@ class ExpenseDayDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => context.push(
+                AppRoutes.addForDate(date.year, date.month, date.day),
+              ),
+              child: const Icon(Icons.add),
+            ),
     );
+  }
+}
+
+Future<void> _showDeleteConfirm({
+  required BuildContext context,
+  required ExpenseStore store,
+  required String expenseId,
+}) async {
+  final t = context.t;
+  final theme = Theme.of(context);
+  final colorScheme = theme.colorScheme;
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      icon: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.expense.withOpacity(0.12),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.delete_outline_rounded,
+          size: 28,
+          color: AppColors.expense,
+        ),
+      ),
+      title: Text(
+        t.commonDelete,
+        textAlign: TextAlign.center,
+        style: theme.textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      content: Text(
+        t.expenseRemoveExpenseConfirm,
+        textAlign: TextAlign.center,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+        ),
+      ),
+      contentPadding: const EdgeInsets.fromLTRB(
+        AppSpacing.xl,
+        AppSpacing.md,
+        AppSpacing.xl,
+        AppSpacing.lg,
+      ),
+      actionsPadding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        0,
+        AppSpacing.lg,
+        AppSpacing.lg,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, false),
+          child: Text(t.commonCancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(ctx, true),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.expense,
+            foregroundColor: colorScheme.onError,
+          ),
+          child: Text(t.commonDelete),
+        ),
+      ],
+    ),
+  );
+  if (ok == true) {
+    await store.deleteExpense(expenseId);
+    if (context.mounted) Navigator.of(context).pop();
   }
 }

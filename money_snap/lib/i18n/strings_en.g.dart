@@ -217,6 +217,75 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Enter description'
 	String get errorsEnterDescription => 'Enter description';
+
+	/// en: 'Appearance'
+	String get settingsAppearance => 'Appearance';
+
+	/// en: 'Dark mode'
+	String get settingsDarkMode => 'Dark mode';
+
+	/// en: 'Change app appearance'
+	String get settingsDarkModeSubtitle => 'Change app appearance';
+
+	/// en: 'Language'
+	String get settingsLanguage => 'Language';
+
+	/// en: 'App language'
+	String get settingsLanguageSubtitle => 'App language';
+
+	/// en: 'English'
+	String get settingsLanguageEnglish => 'English';
+
+	/// en: 'Tiếng Việt'
+	String get settingsLanguageVietnamese => 'Tiếng Việt';
+
+	/// en: 'January'
+	String get commonMonthJanuary => 'January';
+
+	/// en: 'February'
+	String get commonMonthFebruary => 'February';
+
+	/// en: 'March'
+	String get commonMonthMarch => 'March';
+
+	/// en: 'April'
+	String get commonMonthApril => 'April';
+
+	/// en: 'May'
+	String get commonMonthMay => 'May';
+
+	/// en: 'June'
+	String get commonMonthJune => 'June';
+
+	/// en: 'July'
+	String get commonMonthJuly => 'July';
+
+	/// en: 'August'
+	String get commonMonthAugust => 'August';
+
+	/// en: 'September'
+	String get commonMonthSeptember => 'September';
+
+	/// en: 'October'
+	String get commonMonthOctober => 'October';
+
+	/// en: 'November'
+	String get commonMonthNovember => 'November';
+
+	/// en: 'December'
+	String get commonMonthDecember => 'December';
+
+	/// en: '0 đ'
+	String get expenseAmountHint => '0 đ';
+
+	/// en: 'Transaction date'
+	String get expenseTransactionDate => 'Transaction date';
+
+	/// en: 'Tap to change'
+	String get expenseTapToChangeDate => 'Tap to change';
+
+	/// en: 'Time'
+	String get expenseTransactionTime => 'Time';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -286,6 +355,29 @@ extension on Translations {
 			'errorsNoCamera' => 'No camera found',
 			'errorsCameraPermission' => 'Camera permission is required or unavailable.',
 			'errorsEnterDescription' => 'Enter description',
+			'settingsAppearance' => 'Appearance',
+			'settingsDarkMode' => 'Dark mode',
+			'settingsDarkModeSubtitle' => 'Change app appearance',
+			'settingsLanguage' => 'Language',
+			'settingsLanguageSubtitle' => 'App language',
+			'settingsLanguageEnglish' => 'English',
+			'settingsLanguageVietnamese' => 'Tiếng Việt',
+			'commonMonthJanuary' => 'January',
+			'commonMonthFebruary' => 'February',
+			'commonMonthMarch' => 'March',
+			'commonMonthApril' => 'April',
+			'commonMonthMay' => 'May',
+			'commonMonthJune' => 'June',
+			'commonMonthJuly' => 'July',
+			'commonMonthAugust' => 'August',
+			'commonMonthSeptember' => 'September',
+			'commonMonthOctober' => 'October',
+			'commonMonthNovember' => 'November',
+			'commonMonthDecember' => 'December',
+			'expenseAmountHint' => '0 đ',
+			'expenseTransactionDate' => 'Transaction date',
+			'expenseTapToChangeDate' => 'Tap to change',
+			'expenseTransactionTime' => 'Time',
 			_ => null,
 		};
 	}

@@ -6,5 +6,7 @@ class Assets {
   /// Icon: main app icon SVG.
   static const String appIcon = 'assets/icons/app_icon.svg';
   static const String appName = 'assets/icons/app_name.svg';
+  /// Logo: app logo PNG (used in splash and app bar).
+  static const String appLogo = 'assets/icons/app_logo.png';
 }
 

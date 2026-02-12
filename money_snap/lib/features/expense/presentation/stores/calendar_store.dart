@@ -1,56 +1,67 @@
-import 'package:flutter/foundation.dart';
+import 'package:mobx/mobx.dart';
 
 import '../../domain/entities/expense.dart';
 
-/// ViewModel for calendar: view month, selected date, and derived month grid data.
+part 'calendar_store.g.dart';
+
+/// Store for calendar: view month, selected date, and derived month grid data.
 /// Business logic (expenses) comes from ExpenseStore; this holds only UI state.
-class CalendarViewModel extends ChangeNotifier {
-  CalendarViewModel() {
+// ignore: library_private_types_in_public_api
+class CalendarStore = _CalendarStore with _$CalendarStore;
+
+abstract class _CalendarStore with Store {
+  _CalendarStore() {
     final now = DateTime.now();
-    _viewYear = now.year;
-    _viewMonth = now.month;
+    viewYear = now.year;
+    viewMonth = now.month;
   }
 
-  late int _viewYear;
-  late int _viewMonth;
-  DateTime? _selectedDate;
+  @observable
+  int viewYear = DateTime.now().year;
 
-  int get viewYear => _viewYear;
-  int get viewMonth => _viewMonth;
-  DateTime? get selectedDate => _selectedDate;
+  @observable
+  int viewMonth = DateTime.now().month;
+
+  @observable
+  DateTime? selectedDate;
 
   /// Whether [date] is the currently selected day (for UI highlight).
   bool isSelected(DateTime date) {
-    if (_selectedDate == null) return false;
-    return _selectedDate!.year == date.year &&
-        _selectedDate!.month == date.month &&
-        _selectedDate!.day == date.day;
+    if (selectedDate == null) return false;
+    return selectedDate!.year == date.year &&
+        selectedDate!.month == date.month &&
+        selectedDate!.day == date.day;
   }
 
+  @action
   void prevMonth() {
-    if (_viewMonth == 1) {
-      _viewMonth = 12;
-      _viewYear--;
+    if (viewMonth == 1) {
+      viewMonth = 12;
+      viewYear--;
     } else {
-      _viewMonth--;
+      viewMonth--;
     }
-    notifyListeners();
   }
 
+  @action
   void nextMonth() {
-    if (_viewMonth == 12) {
-      _viewMonth = 1;
-      _viewYear++;
+    if (viewMonth == 12) {
+      viewMonth = 1;
+      viewYear++;
     } else {
-      _viewMonth++;
+      viewMonth++;
     }
-    notifyListeners();
   }
 
+  @action
   void selectDate(int year, int month, int day) {
-    _selectedDate = DateTime(year, month, day);
-    notifyListeners();
+    selectedDate = DateTime(year, month, day);
   }
+}
+
+/// Utility functions for calendar operations.
+class CalendarStoreUtils {
+  CalendarStoreUtils._();
 
   /// Builds the flat list of (day, expenses) for the calendar grid.
   /// day=0 means empty cell (previous/next month).

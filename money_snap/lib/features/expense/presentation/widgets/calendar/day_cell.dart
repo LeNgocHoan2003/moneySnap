@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spacing.dart';
 import '../../../../../core/utils/money_utils.dart';
 import '../../../domain/entities/expense.dart';
@@ -98,19 +97,22 @@ class _SimpleDayCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Material(
-      color: AppColors.transparent,
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
         child: Container(
           margin: const EdgeInsets.all(2),
           decoration: BoxDecoration(
-            color: isToday ? AppColors.todayHighlight : AppColors.surface,
+            color: isToday
+                ? colorScheme.primary.withOpacity(0.12)
+                : colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
             boxShadow: [
               BoxShadow(
-                color: AppColors.overlayLight,
+                color: colorScheme.shadow.withOpacity(0.08),
                 blurRadius: 30,
                 offset: const Offset(0, 1),
               ),
@@ -150,22 +152,27 @@ class _DayWithExpensesCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final hasImage = firstImagePath != null && firstImagePath!.isNotEmpty;
     final fileExists = hasImage && File(firstImagePath!).existsSync();
+    // Use scrim/shadow for image overlay so it adapts to light/dark theme.
+    final overlay = colorScheme.shadow;
 
     return Material(
-      color: AppColors.transparent,
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
         child: Container(
           margin: const EdgeInsets.all(2),
           decoration: BoxDecoration(
-            color: isToday ? AppColors.todayHighlight : AppColors.surface,
+            color: isToday
+                ? colorScheme.primary.withOpacity(0.12)
+                : colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
             boxShadow: [
               BoxShadow(
-                color: AppColors.overlayLight,
+                color: colorScheme.shadow.withOpacity(0.08),
                 blurRadius: 2,
                 offset: const Offset(0, 1),
               ),
@@ -187,12 +194,12 @@ class _DayWithExpensesCell extends StatelessWidget {
                 else
                   Positioned.fill(
                     child: Container(
-                      color: AppColors.surfaceVariant,
-                      child: const Center(
+                      color: colorScheme.surfaceContainerHighest,
+                      child: Center(
                         child: Icon(
                           Icons.receipt_long,
                           size: 24,
-                          color: AppColors.textSecondary,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -206,9 +213,9 @@ class _DayWithExpensesCell extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          AppColors.transparent,
-                          AppColors.overlayMedium,
-                          AppColors.overlayStrong,
+                          Colors.transparent,
+                          overlay.withOpacity(0.4),
+                          overlay.withOpacity(0.6),
                         ],
                       ),
                     ),
@@ -222,7 +229,7 @@ class _DayWithExpensesCell extends StatelessWidget {
                     day: day,
                     isToday: isToday,
                     isSelected: isSelected,
-                    onDarkBackground: true,
+
                   ),
                 ),
                 // +N badge (top-right)
@@ -267,11 +274,14 @@ class _DayNumber extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
+    final colorScheme = Theme.of(context).colorScheme;
+    final textColor = onDarkBackground
+        ? colorScheme.surface
+        : colorScheme.onSurface;
     return Text(
       '$day',
       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: onDarkBackground ? AppColors.textLight : AppColors.textPrimary,
+            color: textColor,
             fontWeight: FontWeight.w600,
             fontSize: 12,
           ),

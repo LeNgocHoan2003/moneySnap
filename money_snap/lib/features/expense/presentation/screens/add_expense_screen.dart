@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/money_utils.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/expense.dart';
@@ -30,14 +30,70 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _descriptionController = TextEditingController();
   String? _imagePath;
   bool _saving = false;
+  /// When picture date differs from today, this holds the expense date for editing.
+  DateTime? _expenseDate;
+
+  static bool _isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
 
   /// Pick exactly one image from camera (one picture at a time).
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final xfile = await picker.pickImage(source: ImageSource.camera);
     if (xfile != null) {
-      setState(() => _imagePath = xfile.path);
+      final file = File(xfile.path);
+      final pictureDate = file.lastModifiedSync();
+      final now = DateTime.now();
+      setState(() {
+        _imagePath = xfile.path;
+        // Use picture date when different from today; otherwise today (field still shown).
+        _expenseDate = _isSameDay(pictureDate, now) ? DateTime.now() : pictureDate;
+      });
     }
+  }
+
+  Future<void> _pickDateTime() async {
+    final initial = _expenseDate ?? DateTime.now();
+    final date = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (date == null || !mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(initial),
+    );
+    if (time == null || !mounted) return;
+    setState(() {
+      _expenseDate = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
+    });
+  }
+
+  /// Opens time picker only; updates hour and minute of [_expenseDate].
+  Future<void> _pickTime() async {
+    final initial = _expenseDate ?? DateTime.now();
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(initial),
+    );
+    if (time == null || !mounted) return;
+    setState(() {
+      _expenseDate = DateTime(
+        initial.year,
+        initial.month,
+        initial.day,
+        time.hour,
+        time.minute,
+      );
+    });
   }
 
   Future<void> _save() async {
@@ -51,11 +107,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     setState(() => _saving = true);
     try {
       final amount = MoneyUtils.parseAmount(_descriptionController.text);
+      final expenseDate = _expenseDate ?? DateTime.now();
       final expense = Expense(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         imagePath: _imagePath!,
         description: _descriptionController.text,
-        date: DateTime.now(),
+        date: expenseDate,
         amount: amount,
       );
       await widget.store.addExpense(expense);
@@ -127,6 +184,36 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       ),
               ),
             ),
+            if (_imagePath != null && _expenseDate != null) ...[
+              const SizedBox(height: 16),
+              InkWell(
+                onTap: _pickDateTime,
+                borderRadius: BorderRadius.circular(8),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: context.t.expenseTransactionDate,
+                    border: const OutlineInputBorder(),
+                    suffixIcon: const Icon(Icons.calendar_today),
+                  ),
+                  child: Text(AppDateUtils.formatDate(_expenseDate!)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              InkWell(
+                onTap: _pickTime,
+                borderRadius: BorderRadius.circular(8),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: context.t.expenseTransactionTime,
+                    border: const OutlineInputBorder(),
+                    suffixIcon: const Icon(Icons.access_time),
+                  ),
+                  child: Text(
+                    '${_expenseDate!.hour.toString().padLeft(2, '0')}:${_expenseDate!.minute.toString().padLeft(2, '0')}',
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 16),
             TextFormField(
               controller: _descriptionController,

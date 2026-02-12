@@ -413,7 +413,7 @@ class _CaptureExpenseScreenState extends State<CaptureExpenseScreen> {
                             color: AppColors.textPrimary,
                           ),
                       decoration: InputDecoration(
-                        hintText: '0 đ',
+                        hintText: context.t.expenseAmountHint,
                         hintStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
                               color: AppColors.textSecondary,
                               fontWeight: FontWeight.w500,

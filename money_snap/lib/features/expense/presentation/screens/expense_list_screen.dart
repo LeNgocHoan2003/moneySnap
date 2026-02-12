@@ -8,7 +8,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../../domain/entities/expense.dart';
 import '../stores/expense_store.dart';
-import '../viewmodels/calendar_view_model.dart';
+import '../stores/calendar_store.dart';
 import '../widgets/expense_summary_card.dart';
 import '../widgets/calendar/calendar_page.dart';
 
@@ -26,18 +26,18 @@ class ExpenseListScreen extends StatefulWidget {
 }
 
 class _ExpenseListScreenState extends State<ExpenseListScreen> {
-  late final CalendarViewModel _calendarViewModel;
+  late final CalendarStore _calendarStore;
 
   @override
   void initState() {
     super.initState();
-    _calendarViewModel = CalendarViewModel();
+    _calendarStore = CalendarStore();
   }
 
   List<Expense> _expensesForMonth(List<Expense> expenses) {
     return expenses.where((e) =>
-        e.date.year == _calendarViewModel.viewYear &&
-        e.date.month == _calendarViewModel.viewMonth).toList();
+        e.date.year == _calendarStore.viewYear &&
+        e.date.month == _calendarStore.viewMonth).toList();
   }
 
   @override
@@ -72,14 +72,14 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               children: [
                 ExpenseSummaryCard(
                   monthDate: DateTime(
-                    _calendarViewModel.viewYear,
-                    _calendarViewModel.viewMonth,
+                    _calendarStore.viewYear,
+                    _calendarStore.viewMonth,
                   ),
                   expenses: monthExpenses,
                 ),
                 CalendarPage(
                   store: widget.store,
-                  viewModel: _calendarViewModel,
+                  calendarStore: _calendarStore,
                 ),
               ],
             ),

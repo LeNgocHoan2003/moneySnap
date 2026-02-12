@@ -77,7 +77,10 @@ class ExpenseCalendarScreen extends StatelessWidget {
         title: Observer(
           builder: (_) {
             final now = DateTime.now();
-            return Text(app_utils.AppDateUtils.formatMonthYear(DateTime(now.year, now.month)));
+            return Text(app_utils.AppDateUtils.formatMonthYearLocalized(
+              DateTime(now.year, now.month),
+              context.t,
+            ));
           },
         ),
         backgroundColor: AppColors.surface,

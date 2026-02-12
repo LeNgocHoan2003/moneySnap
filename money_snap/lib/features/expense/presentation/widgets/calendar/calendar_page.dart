@@ -5,58 +5,44 @@ import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spacing.dart';
 import '../../../../../core/router/app_router.dart';
-import '../../viewmodels/calendar_view_model.dart';
+import '../../stores/calendar_store.dart';
 import '../../stores/expense_store.dart';
 import 'calendar_grid.dart';
 import 'month_header.dart';
 import 'weekday_row.dart';
 
 /// Calendar view: white rounded card with month header, weekday row, and day grid.
-/// Uses [CalendarViewModel] for view state and [ExpenseStore] for data.
+/// Uses [CalendarStore] for view state and [ExpenseStore] for data.
 class CalendarPage extends StatefulWidget {
   const CalendarPage({
     super.key,
     required this.store,
-    this.viewModel,
+    this.calendarStore,
   });
 
   final ExpenseStore store;
-  final CalendarViewModel? viewModel;
+  final CalendarStore? calendarStore;
 
   @override
   State<CalendarPage> createState() => _CalendarPageState();
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  late CalendarViewModel _viewModel;
+  late CalendarStore _calendarStore;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = widget.viewModel ?? CalendarViewModel();
-    _viewModel.addListener(_onViewModelChanged);
+    _calendarStore = widget.calendarStore ?? CalendarStore();
   }
 
   @override
   void didUpdateWidget(CalendarPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.viewModel != widget.viewModel) {
-      _viewModel.removeListener(_onViewModelChanged);
-      _viewModel = widget.viewModel ?? CalendarViewModel();
-      _viewModel.addListener(_onViewModelChanged);
+    if (oldWidget.calendarStore != widget.calendarStore) {
+      _calendarStore = widget.calendarStore ?? CalendarStore();
     }
   }
-
-  @override
-  void dispose() {
-    _viewModel.removeListener(_onViewModelChanged);
-    if (widget.viewModel == null) {
-      // We created it, so we could dispose it if it were a disposable resource.
-    }
-    super.dispose();
-  }
-
-  void _onViewModelChanged() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +52,9 @@ class _CalendarPageState extends State<CalendarPage> {
         if (widget.store.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        final cells = CalendarViewModel.buildMonthCells(
-          _viewModel.viewYear,
-          _viewModel.viewMonth,
+        final cells = CalendarStoreUtils.buildMonthCells(
+          _calendarStore.viewYear,
+          _calendarStore.viewMonth,
           widget.store.expenses,
         );
         return Container(
@@ -88,16 +74,16 @@ class _CalendarPageState extends State<CalendarPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               MonthHeader(
-                monthDate: DateTime(_viewModel.viewYear, _viewModel.viewMonth),
-                onPrevMonth: _viewModel.prevMonth,
-                onNextMonth: _viewModel.nextMonth,
+                monthDate: DateTime(_calendarStore.viewYear, _calendarStore.viewMonth),
+                onPrevMonth: _calendarStore.prevMonth,
+                onNextMonth: _calendarStore.nextMonth,
               ),
               const WeekdayRow(),
               const SizedBox(height: AppSpacing.sm),
               CalendarGrid(
                 cells: cells,
-                viewYear: _viewModel.viewYear,
-                viewMonth: _viewModel.viewMonth,
+                viewYear: _calendarStore.viewYear,
+                viewMonth: _calendarStore.viewMonth,
                 onDayTap: (year, month, day, hasExpenses) {
                   if (hasExpenses) {
                     context.push(AppRoutes.dayPath(year, month, day));

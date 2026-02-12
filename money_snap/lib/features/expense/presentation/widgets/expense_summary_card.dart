@@ -68,7 +68,7 @@ class ExpenseSummaryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      app_utils.AppDateUtils.formatMonthYear(monthDate).toUpperCase(),
+                      app_utils.AppDateUtils.formatMonthYearLocalized(monthDate, context.t).toUpperCase(),
                       style: theme.textTheme.labelMedium?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,

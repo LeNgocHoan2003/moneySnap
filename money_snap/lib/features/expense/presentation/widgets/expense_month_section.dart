@@ -50,7 +50,7 @@ class ExpenseMonthSection extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                app_utils.AppDateUtils.formatMonthYear(monthDate),
+                app_utils.AppDateUtils.formatMonthYearLocalized(monthDate, context.t),
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
