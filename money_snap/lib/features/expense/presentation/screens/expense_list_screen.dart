@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../core/router/app_router.dart';
 import '../../domain/entities/expense.dart';
 import '../stores/expense_store.dart';
 import '../stores/calendar_store.dart';
@@ -40,19 +38,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: SvgPicture.asset(Assets.appName, width: 70, height: 70),
-      //   backgroundColor: AppColors.textPrimary,
-      //   elevation: 0,
-      //   foregroundColor: AppColors.textPrimary,
-      // ),
       body: _buildCalendarBody(context),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push(AppRoutes.add),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        child: const Icon(Icons.add),
-      ),
     );
   }
 

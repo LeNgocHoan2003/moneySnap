@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/locale/locale_controller.dart';
 import '../../../../core/theme/theme_controller.dart';
 import '../../../../i18n/strings.g.dart';
 
-// Shared layout constants for cards and tiles (Material 3–friendly).
-const double _kCardRadius = 12;
+// Shared layout constants for minimal, clean UI.
+const double _kCardRadius = 16;
 const double _kSectionSpacing = 28;
 const double _kHeaderToCardSpacing = 10;
 const EdgeInsets _kListPadding = EdgeInsets.symmetric(
@@ -181,15 +182,23 @@ class _SettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: colorScheme.surfaceContainerLow,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? AppColors.darkSurface : colorScheme.surface;
+    final shadowColor = isDark
+        ? Colors.black.withOpacity(0.3)
+        : AppColors.overlayLight;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
         borderRadius: BorderRadius.circular(_kCardRadius),
-        side: BorderSide(
-          color: colorScheme.outlineVariant.withOpacity(0.4),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor,
+            blurRadius: isDark ? 16 : 12,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: child,
     );

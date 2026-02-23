@@ -11,8 +11,8 @@ import 'calendar_grid.dart';
 import 'month_header.dart';
 import 'weekday_row.dart';
 
-/// Calendar view: white rounded card with month header, weekday row, and day grid.
-/// Uses [CalendarStore] for view state and [ExpenseStore] for data.
+/// Calendar view: flat card with month header, weekday row, and day grid.
+/// Minimal styling, subtle shadows.
 class CalendarPage extends StatefulWidget {
   const CalendarPage({
     super.key,
@@ -46,28 +46,35 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? AppColors.darkSurface : colorScheme.surface;
+    final shadowColor = isDark
+        ? Colors.black.withOpacity(0.3)
+        : AppColors.overlayLight;
+
     return Observer(
       builder: (_) {
         if (widget.store.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        // Only rebuild when expenses or calendar view changes
         final cells = CalendarStoreUtils.buildMonthCells(
           _calendarStore.viewYear,
           _calendarStore.viewMonth,
           widget.store.expenses,
         );
         return Container(
-          margin: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, 100),
+          margin: const EdgeInsets.fromLTRB(20, 0, 20, 100),
           decoration: BoxDecoration(
-            color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-            boxShadow: const [
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
               BoxShadow(
-                color: AppColors.overlayLight,
-                blurRadius: 8,
-                offset: Offset(0, 2),
+                color: shadowColor,
+                blurRadius: isDark ? 16 : 12,
+                offset: const Offset(0, 2),
               ),
             ],
           ),
@@ -76,7 +83,10 @@ class _CalendarPageState extends State<CalendarPage> {
             children: [
               Observer(
                 builder: (_) => MonthHeader(
-                  monthDate: DateTime(_calendarStore.viewYear, _calendarStore.viewMonth),
+                  monthDate: DateTime(
+                    _calendarStore.viewYear,
+                    _calendarStore.viewMonth,
+                  ),
                   onPrevMonth: _calendarStore.prevMonth,
                   onNextMonth: _calendarStore.nextMonth,
                 ),
@@ -91,8 +101,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   if (hasExpenses) {
                     context.push(AppRoutes.dayPath(year, month, day));
                   } else {
-                    // When tapping a day without expenses, go to the capture (take picture) screen
-                    // and prefill the date with the tapped day.
                     context.push(AppRoutes.addForDate(year, month, day));
                   }
                 },

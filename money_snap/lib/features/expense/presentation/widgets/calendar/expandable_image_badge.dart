@@ -20,17 +20,18 @@ class ExpandableImageBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (count <= 0) return const SizedBox.shrink();
+    final primary = Theme.of(context).colorScheme.primary;
     return Container(
       width: size,
       height: size,
-      decoration: const BoxDecoration(
-        color: AppColors.primary,
+      decoration: BoxDecoration(
+        color: primary,
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: AppColors.overlayLight,
+            color: Colors.black.withOpacity(0.2),
             blurRadius: 2,
-            offset: Offset(0, 1),
+            offset: const Offset(0, 1),
           ),
         ],
       ),

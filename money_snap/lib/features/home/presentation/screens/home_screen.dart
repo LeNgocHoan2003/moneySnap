@@ -9,7 +9,6 @@ import '../../../../features/expense/presentation/stores/expense_store.dart';
 import '../../../../features/expense/presentation/screens/expense_list_screen.dart';
 import '../../../../features/settings/presentation/screens/settings_screen.dart';
 
-/// Tabs for the home screen.
 enum _HomeTab { expenses, settings }
 
 /// Home screen with bottom tabs for expenses and settings.
@@ -19,7 +18,6 @@ class HomeScreen extends StatefulWidget {
     required this.store,
   });
 
-  /// Shared expense store instance.
   final ExpenseStore store;
 
   @override
@@ -33,45 +31,59 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final navBgColor = isDark ? AppColors.darkSurface : colorScheme.surface;
+    final shadowColor = isDark
+        ? Colors.black.withOpacity(0.4)
+        : AppColors.overlayLight;
 
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            Image.asset(Assets.appLogo, height: 36, fit: BoxFit.contain),
-            const SizedBox(width: 8),
-            Text(context.t.appTitle, style: theme.textTheme.titleLarge),
+            Image.asset(
+              Assets.appLogo,
+              height: 26,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              context.t.appTitle,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.2,
+              ),
+            ),
           ],
-        )
-
+        ),
       ),
       body: _buildBody(),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: colorScheme.surface,
+          color: navBgColor,
           boxShadow: [
             BoxShadow(
-              color: AppColors.overlayLight,
-              blurRadius: 8,
+              color: shadowColor,
+              blurRadius: 12,
               offset: const Offset(0, -2),
             ),
           ],
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _navItem(
                   Icons.home_outlined,
-                  Icons.home,
+                  Icons.home_rounded,
                   'Home',
                   _HomeTab.expenses,
                 ),
                 _navItem(
                   Icons.settings_outlined,
-                  Icons.settings,
+                  Icons.settings_rounded,
                   'Settings',
                   _HomeTab.settings,
                 ),
@@ -83,9 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: _selectedTab == _HomeTab.expenses
           ? FloatingActionButton(
               onPressed: () => context.push(AppRoutes.add),
-              backgroundColor: colorScheme.primary,
-              foregroundColor: colorScheme.onPrimary,
-              child: const Icon(Icons.add),
+              elevation: isDark ? 4 : 2,
+              child: const Icon(Icons.add_rounded),
             )
           : null,
     );
@@ -108,31 +119,36 @@ class _HomeScreenState extends State<HomeScreen> {
   ) {
     final colorScheme = Theme.of(context).colorScheme;
     final selected = _selectedTab == tab;
+    final activeColor = colorScheme.primary;
+    final inactiveColor = colorScheme.onSurfaceVariant.withOpacity(
+      Theme.of(context).brightness == Brightness.dark ? 0.6 : 0.7,
+    );
+
     return InkWell(
       onTap: () => setState(() => _selectedTab = tab),
-      borderRadius: BorderRadius.circular(8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 12),
-          Icon(
-            selected ? filled : outline,
-            color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
-            size: 26,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              selected ? filled : outline,
+              color: selected ? activeColor : inactiveColor,
+              size: 24,
             ),
-          ),
-          const SizedBox(height: 8),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: selected ? activeColor : inactiveColor,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-

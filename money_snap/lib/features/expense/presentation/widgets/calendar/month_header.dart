@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spacing.dart';
 import '../../../../../i18n/strings.g.dart';
 import '../../../../../core/utils/date_utils.dart' as app_utils;
 
-/// Calendar header: left arrow, month/year label, right arrow.
+/// Calendar header: chevron buttons and month/year label.
+/// Minimal styling, soft colors.
 class MonthHeader extends StatelessWidget {
   const MonthHeader({
     super.key,
@@ -20,7 +20,8 @@ class MonthHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -31,29 +32,29 @@ class MonthHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            icon: const Icon(Icons.chevron_left),
+            icon: const Icon(Icons.chevron_left_rounded),
             onPressed: onPrevMonth,
-            color: colorScheme.onSurface,
+            color: colorScheme.onSurfaceVariant,
             style: IconButton.styleFrom(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
           ),
           Text(
             app_utils.AppDateUtils.formatMonthYearLocalized(monthDate, context.t),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
-                ),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
+            ),
           ),
           IconButton(
-            icon: const Icon(Icons.chevron_right),
+            icon: const Icon(Icons.chevron_right_rounded),
             onPressed: onNextMonth,
-            color: colorScheme.onSurface,
+            color: colorScheme.onSurfaceVariant,
             style: IconButton.styleFrom(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
           ),

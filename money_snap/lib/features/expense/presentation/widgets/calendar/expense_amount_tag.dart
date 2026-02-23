@@ -1,33 +1,31 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_spacing.dart';
-import '../../../../../core/utils/money_utils.dart';
 
-/// Pill label showing expense/income amount. Green for positive (income), red for negative (expense).
+/// Minimal pill label for expense/income amount.
+/// Softer green/red tones, no heavy shadows.
 class ExpenseAmountTag extends StatelessWidget {
   const ExpenseAmountTag({
     super.key,
     required this.amount,
     this.fontSize = 10,
     this.compact = false,
+    this.incomeColor,
+    this.expenseColor,
   });
 
-  /// Amount can be positive (income) or negative (expense)
   final int amount;
   final double fontSize;
-  /// When true, uses compact format (e.g. "+433K" or "-433K") for small UI like calendar day cell.
   final bool compact;
+  final Color? incomeColor;
+  final Color? expenseColor;
 
   bool get isPositive => amount > 0;
   int get absoluteAmount => amount.abs();
 
   String _formatAmount() {
-    if (compact) {
-      return _formatCompact();
-    } else {
-      return _formatFull();
-    }
+    if (compact) return _formatCompact();
+    return _formatFull();
   }
 
   String _formatCompact() {
@@ -53,27 +51,24 @@ class ExpenseAmountTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (amount == 0) return const SizedBox.shrink();
-    
+
+    final inc = incomeColor ?? AppColors.income;
+    final exp = expenseColor ?? AppColors.expense;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
+      padding: EdgeInsets.symmetric(
+        horizontal: compact ? 4 : 8,
+        vertical: compact ? 2 : 4,
+      ),
       decoration: BoxDecoration(
-        color: isPositive 
-            ? AppColors.income.withOpacity(0.5)
-            : AppColors.expense.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.overlayLight,
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
+        color: isPositive ? inc.withOpacity(0.2) : exp.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         _formatAmount(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textLight.withOpacity(0.9),
-              fontWeight: FontWeight.bold,
+              color: isPositive ? inc : exp,
+              fontWeight: FontWeight.w600,
               fontSize: fontSize,
             ),
         maxLines: 1,

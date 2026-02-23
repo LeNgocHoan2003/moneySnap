@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spacing.dart';
 import '../../../../../i18n/strings.g.dart';
 
-/// Row of weekday labels (MON → SUN). Uses localized labels when [labels] not provided.
+/// Row of weekday labels. Soft, muted typography.
 class WeekdayRow extends StatelessWidget {
-  const WeekdayRow({
-    super.key,
-    this.labels,
-  });
+  const WeekdayRow({super.key, this.labels});
 
-  /// If null, uses localized short weekday names from i18n.
   final List<String>? labels;
 
   @override
@@ -27,7 +22,6 @@ class WeekdayRow extends StatelessWidget {
           t.commonWeekdaySatShort,
           t.commonWeekdaySunShort,
         ];
-    final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
@@ -39,8 +33,8 @@ class WeekdayRow extends StatelessWidget {
               child: Text(
                 resolvedLabels[i],
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
                     ),
               ),
             ),

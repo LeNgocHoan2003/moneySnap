@@ -1,46 +1,56 @@
 import 'package:flutter/material.dart';
 
+/// Color palette for Money Snap.
+/// Light mode: minimal, Material 3 inspired.
+/// Dark mode: premium fintech dark theme.
 class AppColors {
   AppColors._();
 
-  // Brand
-  static const primary = Color(0xFF2D5BFF);
-  static const secondary = Color(0xFF00A86B);
+  // Brand & Primary
+  static const primary = Color(0xFF4F6BED);
+  static const primaryContainer = Color(0xFFE8ECFF);
 
-  // Background
-  static const background = Color(0xFFF8F9FB);
+  // Background (light)
+  static const background = Color(0xFFFAFAFA);
   static const surface = Color(0xFFFFFFFF);
-  /// Light grey for empty cells / placeholders (e.g. grey.shade100/200).
-  static const surfaceVariant = Color(0xFFEEEEEE);
+  static const surfaceVariant = Color(0xFFF5F5F5);
 
-  // Text
+  // Text (light)
   static const textPrimary = Color(0xFF1C1C1C);
   static const textSecondary = Color(0xFF6B6B6B);
   static const textLight = Color(0xFFFFFFFF);
-  /// Muted text on dark background (e.g. white70).
   static const textLightMuted = Color(0xB3FFFFFF);
-  /// Dimmed text on dark background (e.g. white54).
   static const textLightDimmed = Color(0x8AFFFFFF);
 
-  // Expense
-  static const expense = Color(0xFFE53935);
-  static const income = Color(0xFF2E7D32);
+  // Finance (shared)
+  static const expense = Color(0xFFE57373);
+  static const income = Color(0xFF66BB6A);
 
-  // Border / Divider
-  static const border = Color(0xFFE0E0E0);
+  // Border / Divider (light)
+  static const border = Color(0xFFEEEEEE);
 
-  // Overlay
+  // Overlay & Shadows
   static const overlayDark = Color(0x66000000);
-  /// Very light overlay (e.g. shadow 4% black).
   static const overlayLight = Color(0x0A000000);
-  /// Medium overlay (~25% black) for gradients.
   static const overlayMedium = Color(0x40000000);
-  /// Strong overlay (~35% black) for gradients.
   static const overlayStrong = Color(0x59000000);
+  static const overlayImage = Color(0x4D000000); // ~30% for image overlay
 
   // Utility
   static const transparent = Color(0x00000000);
 
-  /// Light primary tint for today/highlighted calendar cell.
-  static const todayHighlight = Color(0x1F2D5BFF);
+  // Calendar (light)
+  static const todayHighlight = Color(0x154F6BED);
+
+  // ----- Dark theme (premium fintech) -----
+  static const darkBackground = Color(0xFF0F1115);
+  static const darkSurface = Color(0xFF1A1D23);
+  static const darkSurfaceElevated = Color(0xFF20242C);
+  static const darkPrimary = Color(0xFF5B7CFA);
+  static const darkIncome = Color(0xFF4CAF50);
+  static const darkExpense = Color(0xFFEF5350);
+  static const darkTextPrimary = Color(0xFFE6EAF2);
+  static const darkTextSecondary = Color(0xFFA0A6B1);
+  static const darkDivider = Color(0xFF2A2E36);
+  static const darkTodayGlow = Color(0x335B7CFA);
 }
