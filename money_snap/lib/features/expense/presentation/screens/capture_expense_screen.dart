@@ -4,8 +4,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/utils/money_utils.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/expense.dart';
@@ -14,9 +12,9 @@ import '../services/image_processing_service.dart';
 import '../stores/expense_store.dart';
 import '../widgets/capture/camera_error_widget.dart';
 import '../widgets/capture/camera_preview_widget.dart';
-import '../widgets/capture/capture_button.dart';
+import '../widgets/capture/capture_expense_bottom_controls.dart';
+import '../widgets/capture/capture_expense_top_bar.dart';
 import '../widgets/capture/capture_preview_widget.dart';
-import '../widgets/capture/circle_button.dart';
 import '../widgets/dialogs/camera_permission_dialog.dart';
 
 /// Fullscreen camera capture screen for receipt photos (per take_picture.md).
@@ -44,7 +42,6 @@ class _CaptureExpenseScreenState extends State<CaptureExpenseScreen> {
   
   bool _isInitializing = true;
   bool _isCapturing = false;
-  bool _showFlashOverlay = false;
   String? _errorMessageKey;
   String? _errorMessageCode;
   String? _capturedImagePath;
@@ -130,13 +127,16 @@ class _CaptureExpenseScreenState extends State<CaptureExpenseScreen> {
     try {
       final xfile = await _cameraService.takePicture();
       if (!mounted) return;
-      setState(() => _showFlashOverlay = true);
-      await Future.delayed(const Duration(milliseconds: 150));
-      if (!mounted) return;
-      final croppedPath = await _imageProcessingService.cropToCenterSquare(xfile.path);
+      final controller = _cameraService.controller;
+      final previewSize = controller?.value.previewSize;
+      final croppedPath = await _imageProcessingService.cropToCenterSquare(
+        xfile.path,
+        previewWidth: previewSize != null ? previewSize.width : null,
+        previewHeight: previewSize != null ? previewSize.height : null,
+        flipHorizontal: _cameraService.isFrontCamera,
+      );
       if (!mounted) return;
       setState(() {
-        _showFlashOverlay = false;
         _capturedImagePath = croppedPath ?? xfile.path;
         _amountController.clear();
         _isPositive = false;
@@ -263,104 +263,28 @@ class _CaptureExpenseScreenState extends State<CaptureExpenseScreen> {
             CameraPreviewWidget(
               controller: controller,
               squareSize: squareSize,
-              showFlashOverlay: _showFlashOverlay,
             ),
-          // Top bar
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.md,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CircleButton(
-                    icon: Icons.close,
-                    onPressed: _capturedImagePath != null
-                        ? _backToCamera
-                        : () {
-                            FocusScope.of(context).unfocus();
-                            Navigator.of(context).pop();
-                          },
-                  ),
-                  if (_capturedImagePath == null)
-                    CircleButton(
-                      icon: _cameraService.isFlashOn ? Icons.flash_on : Icons.flash_off,
-                      onPressed: _toggleFlash,
-                    )
-                  else
-                    const SizedBox(width: 48, height: 48),
-                ],
-              ),
-            ),
+          CaptureExpenseTopBar(
+            onClose: _capturedImagePath != null
+                ? _backToCamera
+                : () {
+                    FocusScope.of(context).unfocus();
+                    Navigator.of(context).pop();
+                  },
+            showFlash: _capturedImagePath == null,
+            isFlashOn: _cameraService.isFlashOn,
+            onToggleFlash: _toggleFlash,
           ),
-          // Bottom controls
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: MediaQuery.paddingOf(context).bottom + AppSpacing.lg,
-            child: _capturedImagePath != null
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircleButton(
-                          icon: Icons.refresh,
-                          onPressed: _backToCamera,
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: FilledButton(
-                            onPressed: _saving ? null : _saveExpense,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF7C7FEA),
-                              foregroundColor: AppColors.textLight,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: _saving
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: AppColors.textLight,
-                                    ),
-                                  )
-                                : Text(
-                                    context.t.expenseSaveExpense,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CircleButton(
-                        icon: Icons.photo_library_outlined,
-                        onPressed: _pickFromGallery,
-                      ),
-                      CaptureButton(
-                        onPressed: _isCapturing ? null : _takePicture,
-                        isCapturing: _isCapturing,
-                      ),
-                      CircleButton(
-                        icon: Icons.cameraswitch,
-                        onPressed: _cameraService.cameras.length < 2 ? null : _switchCamera,
-                      ),
-                    ],
-                  ),
+          CaptureExpenseBottomControls(
+            isPreviewMode: _capturedImagePath != null,
+            saving: _saving,
+            onRetry: _backToCamera,
+            onSave: _saveExpense,
+            onPickFromGallery: _pickFromGallery,
+            onTakePicture: _takePicture,
+            onSwitchCamera: _switchCamera,
+            isCapturing: _isCapturing,
+            canSwitchCamera: _cameraService.cameras.length >= 2,
           ),
         ],
       ),

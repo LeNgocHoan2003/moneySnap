@@ -15,29 +15,29 @@ class ExpenseSummaryCard extends StatelessWidget {
     required this.monthDate,
     required this.expenses,
     this.monthlyBudget = AppConstants.defaultMonthlyBudget,
+
+    /// When true, header shows only the day number (e.g. for day-detail screen).
+    this.showDayOnly = false,
   });
 
   final DateTime monthDate;
   final List<Expense> expenses;
   final int monthlyBudget;
+  final bool showDayOnly;
 
-  int get _earnedAmount => expenses.fold<int>(
-        0,
-        (s, e) {
-          final amount =
-              e.amount != 0 ? e.amount : MoneyUtils.parseAmount(e.description);
-          return s + (amount > 0 ? amount : 0);
-        },
-      );
+  int get _earnedAmount => expenses.fold<int>(0, (s, e) {
+    final amount = e.amount != 0
+        ? e.amount
+        : MoneyUtils.parseAmount(e.description);
+    return s + (amount > 0 ? amount : 0);
+  });
 
-  int get _spentAmount => expenses.fold<int>(
-        0,
-        (s, e) {
-          final amount =
-              e.amount != 0 ? e.amount : MoneyUtils.parseAmount(e.description);
-          return s + (amount < 0 ? amount.abs() : 0);
-        },
-      );
+  int get _spentAmount => expenses.fold<int>(0, (s, e) {
+    final amount = e.amount != 0
+        ? e.amount
+        : MoneyUtils.parseAmount(e.description);
+    return s + (amount < 0 ? amount.abs() : 0);
+  });
 
   int get _totalAmount => _earnedAmount - _spentAmount;
 
@@ -52,8 +52,9 @@ class ExpenseSummaryCard extends StatelessWidget {
     final count = expenses.length;
 
     final surfaceColor = isDark ? AppColors.darkSurface : AppColors.surface;
-    final secondaryColor =
-        isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final secondaryColor = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.textSecondary;
     final incomeColor = isDark ? AppColors.darkIncome : AppColors.income;
     final expenseColor = isDark ? AppColors.darkExpense : AppColors.expense;
     final dividerColor = isDark ? AppColors.darkDivider : AppColors.border;
@@ -79,16 +80,24 @@ class ExpenseSummaryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              app_utils.AppDateUtils.formatMonthYearLocalized(
-                  monthDate, context.t),
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: secondaryColor,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.2,
+            if (!showDayOnly)
+              Column(
+                children: [
+                  Text(
+                    app_utils.AppDateUtils.formatMonthYearLocalized(
+                      monthDate,
+                      context.t,
+                    ),
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: secondaryColor,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
               ),
-            ),
-            const SizedBox(height: 20),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -155,9 +164,7 @@ class ExpenseSummaryCard extends StatelessWidget {
               count == 1
                   ? context.t.expenseTransactionCount(count: 1)
                   : context.t.expenseTransactionCountPlural(count: count),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: secondaryColor,
-              ),
+              style: theme.textTheme.bodySmall?.copyWith(color: secondaryColor),
             ),
           ],
         ),

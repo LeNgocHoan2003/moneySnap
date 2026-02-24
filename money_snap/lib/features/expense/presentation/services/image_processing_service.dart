@@ -11,28 +11,78 @@ class ImageProcessingService {
   static const int _jpegQuality = 85;
 
   /// Crops image to center square, resizes if needed, compresses, and saves to a temp file.
+  /// When [previewWidth] and [previewHeight] are provided (from camera preview), the crop
+  /// is computed so the saved square matches what was inside the preview's center square,
+  /// avoiding "wider" saved image than what the user framed.
+  /// When [flipHorizontal] is true (e.g. front camera), the image is mirrored so the saved
+  /// result matches what the user saw in the preview.
   /// Returns path or null on failure.
-  Future<String?> cropToCenterSquare(String sourcePath) async {
+  Future<String?> cropToCenterSquare(
+    String sourcePath, {
+    double? previewWidth,
+    double? previewHeight,
+    bool flipHorizontal = false,
+  }) async {
     try {
       final file = File(sourcePath);
       if (!await file.exists()) return null;
-      
+
       final bytes = await file.readAsBytes();
       if (bytes.isEmpty) return null;
-      
-      final image = img.decodeImage(bytes);
+
+      var image = img.decodeImage(bytes);
       if (image == null) return null;
 
-      // Crop to center square
-      final size = image.width < image.height ? image.width : image.height;
-      if (size <= 0) return null;
+      // Front camera captures are often not mirrored; flip so saved image matches preview.
+      if (flipHorizontal) {
+        image = img.flipHorizontal(image);
+      }
+
+      final captureW = image.width;
+      final captureH = image.height;
+      if (captureW <= 0 || captureH <= 0) return null;
+
+      int cropX;
+      int cropY;
+      int cropSize;
+
+      if (previewWidth != null &&
+          previewHeight != null &&
+          previewWidth > 0 &&
+          previewHeight > 0) {
+        // Map preview center square to capture image coords so saved crop matches what user saw.
+        final scaleW = captureW / previewWidth;
+        final scaleH = captureH / previewHeight;
+        final scaleUsed = scaleW < scaleH ? scaleW : scaleH;
+
+        final previewInCaptureW = (previewWidth * scaleUsed).round();
+        final previewInCaptureH = (previewHeight * scaleUsed).round();
+        final left = ((captureW - previewInCaptureW) / 2).round();
+        final top = ((captureH - previewInCaptureH) / 2).round();
+
+        final previewSquareSide = previewWidth < previewHeight ? previewWidth : previewHeight;
+        int squareInCaptureSize = (previewSquareSide * scaleUsed).round();
+        squareInCaptureSize = squareInCaptureSize.clamp(1, captureW).clamp(1, captureH);
+
+        cropX = left + ((previewInCaptureW - squareInCaptureSize) ~/ 2);
+        cropY = top + ((previewInCaptureH - squareInCaptureSize) ~/ 2);
+        cropX = cropX.clamp(0, captureW - squareInCaptureSize);
+        cropY = cropY.clamp(0, captureH - squareInCaptureSize);
+        cropSize = squareInCaptureSize;
+      } else {
+        // No preview info (e.g. from gallery): use center square of image.
+        cropSize = captureW < captureH ? captureW : captureH;
+        if (cropSize <= 0) return null;
+        cropX = (captureW - cropSize) ~/ 2;
+        cropY = (captureH - cropSize) ~/ 2;
+      }
 
       var cropped = img.copyCrop(
         image,
-        x: (image.width - size) ~/ 2,
-        y: (image.height - size) ~/ 2,
-        width: size,
-        height: size,
+        x: cropX,
+        y: cropY,
+        width: cropSize,
+        height: cropSize,
       );
 
       // Resize if image is too large (reduces memory usage and file size)

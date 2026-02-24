@@ -89,7 +89,11 @@ class ExpenseDayDetailScreen extends StatelessWidget {
           return SafeArea(
             child: Column(
               children: [
-                ExpenseSummaryCard(monthDate: date, expenses: dayExpenses),
+                ExpenseSummaryCard(
+                  monthDate: date,
+                  expenses: dayExpenses,
+                  showDayOnly: true,
+                ),
                 Expanded(
                   child: GridView.builder(
                     padding: const EdgeInsets.symmetric(

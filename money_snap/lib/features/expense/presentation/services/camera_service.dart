@@ -22,6 +22,13 @@ class CameraService {
   /// Checks if camera is initialized.
   bool get isInitialized => _controller?.value.isInitialized ?? false;
 
+  /// True when the current camera is front-facing (selfie). Used to mirror the captured image
+  /// so it matches the preview.
+  bool get isFrontCamera =>
+      _cameras.isNotEmpty &&
+      _currentCameraIndex < _cameras.length &&
+      _cameras[_currentCameraIndex].lensDirection == CameraLensDirection.front;
+
   /// Initializes available cameras and sets up the first camera.
   Future<void> initialize() async {
     _cameras = await availableCameras();
