@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'core/constants/app_colors.dart';
+import 'core/currency/currency_controller.dart';
 import 'core/di/injection.dart';
 import 'core/locale/locale_controller.dart';
 import 'core/router/app_router.dart';
@@ -12,6 +13,7 @@ import 'i18n/strings.g.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocaleController.instance.init();
+  await CurrencyController.instance.init();
   await Injection.init();
   await ThemeController.instance.init();
   runApp(const MainApp());
@@ -49,9 +51,12 @@ class MainApp extends StatelessWidget {
     return TranslationProvider(
       child: Builder(
         builder: (context) {
-          return ValueListenableBuilder<ThemeMode>(
-            valueListenable: ThemeController.instance.themeMode,
-            builder: (context, themeMode, _) {
+          return ValueListenableBuilder<AppCurrency>(
+            valueListenable: CurrencyController.instance.currency,
+            builder: (context, _, __) {
+              return ValueListenableBuilder<ThemeMode>(
+                valueListenable: ThemeController.instance.themeMode,
+                builder: (context, themeMode, _) {
               return MaterialApp.router(
                 debugShowCheckedModeBanner: false,
                 title: context.t.appTitle,
@@ -136,6 +141,8 @@ class MainApp extends StatelessWidget {
                   GlobalCupertinoLocalizations.delegate,
                   GlobalWidgetsLocalizations.delegate,
                 ],
+              );
+                },
               );
             },
           );

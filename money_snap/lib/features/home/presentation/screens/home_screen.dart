@@ -57,7 +57,48 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: _buildBody(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_selectedTab == _HomeTab.expenses)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+                child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: colorScheme.outline.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.star_rounded,
+                      size: 20,
+                      color: colorScheme.primary.withOpacity(0.9),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        context.t.homeUsageGuide,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant.withOpacity(
+                            isDark ? 0.6 : 0.7,
+                          ),
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ),
+          Expanded(child: _buildBody()),
+        ],
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: navBgColor,

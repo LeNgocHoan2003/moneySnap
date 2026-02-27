@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/currency/currency_controller.dart';
 import '../../../../core/locale/locale_controller.dart';
 import '../../../../core/theme/theme_controller.dart';
 import '../../../../i18n/strings.g.dart';
@@ -121,6 +122,56 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: _kSectionSpacing),
+          _SectionHeader(
+            icon: Icons.attach_money_rounded,
+            label: t.settingsCurrency,
+            colorScheme: colorScheme,
+            textTheme: textTheme,
+          ),
+          const SizedBox(height: _kHeaderToCardSpacing),
+          ValueListenableBuilder<AppCurrency>(
+            valueListenable: CurrencyController.instance.currency,
+            builder: (context, currentCurrency, _) {
+              return _SettingsCard(
+                colorScheme: colorScheme,
+                theme: theme,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _LanguageTile(
+                      title: t.settingsCurrencyVND,
+                      subtitle: t.settingsCurrencySubtitle,
+                      isSelected: currentCurrency == AppCurrency.vnd,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                      onTap: () async {
+                        await CurrencyController.instance.setCurrency(AppCurrency.vnd);
+                        if (context.mounted) {}
+                      },
+                    ),
+                    Divider(
+                      height: 1,
+                      indent: 20,
+                      endIndent: 20,
+                      color: colorScheme.outlineVariant.withOpacity(0.5),
+                    ),
+                    _LanguageTile(
+                      title: t.settingsCurrencyUSD,
+                      subtitle: t.settingsCurrencySubtitle,
+                      isSelected: currentCurrency == AppCurrency.usd,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                      onTap: () async {
+                        await CurrencyController.instance.setCurrency(AppCurrency.usd);
+                        if (context.mounted) {}
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),

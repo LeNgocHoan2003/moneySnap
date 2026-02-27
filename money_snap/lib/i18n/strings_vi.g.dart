@@ -81,6 +81,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get homeStatistics => 'Thống kê';
 	@override String get homeSettings => 'Cài đặt';
 	@override String homeTabComingSoon({required Object tab}) => '${tab} – Sắp ra mắt';
+	@override String get homeUsageGuide => 'Nhấn + để ghi lại thu nhập hoặc chi tiêu — đơn giản lắm!';
 	@override String get commonWeekdayMon => 'T2';
 	@override String get commonWeekdayTue => 'T3';
 	@override String get commonWeekdayWed => 'T4';
@@ -105,6 +106,10 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get settingsLanguageSubtitle => 'Ngôn ngữ ứng dụng';
 	@override String get settingsLanguageEnglish => 'English';
 	@override String get settingsLanguageVietnamese => 'Tiếng Việt';
+	@override String get settingsCurrency => 'Tiền tệ';
+	@override String get settingsCurrencySubtitle => 'Đơn vị tiền hiển thị';
+	@override String get settingsCurrencyVND => 'Việt Nam Đồng (₫)';
+	@override String get settingsCurrencyUSD => 'Đô la Mỹ (USD)';
 	@override String get commonMonthJanuary => 'Tháng 1';
 	@override String get commonMonthFebruary => 'Tháng 2';
 	@override String get commonMonthMarch => 'Tháng 3';
@@ -178,6 +183,7 @@ extension on TranslationsVi {
 			'homeStatistics' => 'Thống kê',
 			'homeSettings' => 'Cài đặt',
 			'homeTabComingSoon' => ({required Object tab}) => '${tab} – Sắp ra mắt',
+			'homeUsageGuide' => 'Nhấn + để ghi lại thu nhập hoặc chi tiêu — đơn giản lắm!',
 			'commonWeekdayMon' => 'T2',
 			'commonWeekdayTue' => 'T3',
 			'commonWeekdayWed' => 'T4',
@@ -202,6 +208,10 @@ extension on TranslationsVi {
 			'settingsLanguageSubtitle' => 'Ngôn ngữ ứng dụng',
 			'settingsLanguageEnglish' => 'English',
 			'settingsLanguageVietnamese' => 'Tiếng Việt',
+			'settingsCurrency' => 'Tiền tệ',
+			'settingsCurrencySubtitle' => 'Đơn vị tiền hiển thị',
+			'settingsCurrencyVND' => 'Việt Nam Đồng (₫)',
+			'settingsCurrencyUSD' => 'Đô la Mỹ (USD)',
 			'commonMonthJanuary' => 'Tháng 1',
 			'commonMonthFebruary' => 'Tháng 2',
 			'commonMonthMarch' => 'Tháng 3',
