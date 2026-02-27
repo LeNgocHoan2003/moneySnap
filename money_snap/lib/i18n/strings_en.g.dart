@@ -167,6 +167,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// en: '$tab – Coming soon'
 	String homeTabComingSoon({required Object tab}) => '${tab} – Coming soon';
 
+	/// en: 'Tap + to log what you've earned or spent — quick and easy!'
+	String get homeUsageGuide => 'Tap + to log what you\'ve earned or spent — quick and easy!';
+
 	/// en: 'Mon'
 	String get commonWeekdayMon => 'Mon';
 
@@ -238,6 +241,18 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// en: 'Tiếng Việt'
 	String get settingsLanguageVietnamese => 'Tiếng Việt';
+
+	/// en: 'Currency'
+	String get settingsCurrency => 'Currency';
+
+	/// en: 'Display currency'
+	String get settingsCurrencySubtitle => 'Display currency';
+
+	/// en: 'Vietnamese Dong (₫)'
+	String get settingsCurrencyVND => 'Vietnamese Dong (₫)';
+
+	/// en: 'US Dollar (USD)'
+	String get settingsCurrencyUSD => 'US Dollar (USD)';
 
 	/// en: 'January'
 	String get commonMonthJanuary => 'January';
@@ -353,6 +368,7 @@ extension on Translations {
 			'homeStatistics' => 'Statistics',
 			'homeSettings' => 'Settings',
 			'homeTabComingSoon' => ({required Object tab}) => '${tab} – Coming soon',
+			'homeUsageGuide' => 'Tap + to log what you\'ve earned or spent — quick and easy!',
 			'commonWeekdayMon' => 'Mon',
 			'commonWeekdayTue' => 'Tue',
 			'commonWeekdayWed' => 'Wed',
@@ -377,6 +393,10 @@ extension on Translations {
 			'settingsLanguageSubtitle' => 'App language',
 			'settingsLanguageEnglish' => 'English',
 			'settingsLanguageVietnamese' => 'Tiếng Việt',
+			'settingsCurrency' => 'Currency',
+			'settingsCurrencySubtitle' => 'Display currency',
+			'settingsCurrencyVND' => 'Vietnamese Dong (₫)',
+			'settingsCurrencyUSD' => 'US Dollar (USD)',
 			'commonMonthJanuary' => 'January',
 			'commonMonthFebruary' => 'February',
 			'commonMonthMarch' => 'March',
