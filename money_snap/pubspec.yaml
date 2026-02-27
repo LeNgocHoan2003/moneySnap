@@ -1,10 +1,10 @@
 name: money_snap
 description: "Money Snap - Track your expenses by capturing receipts"
 publish_to: 'none'
-version: 1.0.0+3
+version: 1.0.0+4
 
 environment:
-  sdk: ^3.9.2
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:

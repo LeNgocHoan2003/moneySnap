@@ -6,5 +6,5 @@ class AppConstants {
   static const String expenseBoxName = 'expenses';
 
   /// Default monthly budget (VND) for budget bar percentage.
-  static const int defaultMonthlyBudget = 1_000_000;
+  static const int defaultMonthlyBudget = 1000000;
 }
