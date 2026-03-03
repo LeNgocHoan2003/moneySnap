@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../i18n/strings.g.dart';
@@ -12,10 +13,7 @@ import '../../../../core/utils/date_utils.dart' as app_utils;
 
 /// Monthly calendar grid: 7 columns (Mon–Sun), day cells with thumbnail and total.
 class ExpenseCalendarScreen extends StatelessWidget {
-  const ExpenseCalendarScreen({
-    super.key,
-    required this.store,
-  });
+  ExpenseCalendarScreen({super.key}) : store = sl<ExpenseStore>();
 
   final ExpenseStore store;
 

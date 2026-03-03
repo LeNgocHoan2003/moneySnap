@@ -26,6 +26,7 @@ dependencies:
   slang_flutter: ^4.12.1
   flutter_svg: ^2.0.10
   google_fonts: ^6.2.1
+  get_it: ^8.0.2
 
 
 

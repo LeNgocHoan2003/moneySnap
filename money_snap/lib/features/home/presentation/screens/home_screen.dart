@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_snap/i18n/strings.g.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/router/app_router.dart';
@@ -13,18 +14,15 @@ enum _HomeTab { expenses, settings }
 
 /// Home screen with bottom tabs for expenses and settings.
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    super.key,
-    required this.store,
-  });
+  const HomeScreen({super.key});
 
-  final ExpenseStore store;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late final ExpenseStore _store = sl<ExpenseStore>();
   _HomeTab _selectedTab = _HomeTab.expenses;
 
   @override
@@ -146,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBody() {
     switch (_selectedTab) {
       case _HomeTab.expenses:
-        return ExpenseListScreen(store: widget.store);
+        return ExpenseListScreen(store: _store);
       case _HomeTab.settings:
         return const SettingsScreen();
     }

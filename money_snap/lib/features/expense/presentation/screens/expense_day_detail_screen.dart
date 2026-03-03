@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/utils/date_utils.dart' as app_utils;
 import '../../../../i18n/strings.g.dart';
@@ -12,18 +13,15 @@ import '../widgets/expense_summary_card.dart';
 
 /// List of expenses for one day (opened when tapping a day in the calendar).
 class ExpenseDayDetailScreen extends StatelessWidget {
-  const ExpenseDayDetailScreen({
+  ExpenseDayDetailScreen({
     super.key,
     required this.date,
-    required this.expenses,
-    required this.store,
     required this.onBack,
-  });
+  }) : store = sl<ExpenseStore>();
 
   final DateTime date;
-  final List<Expense> expenses;
-  final ExpenseStore store;
   final VoidCallback onBack;
+  final ExpenseStore store;
 
   /// Filters expenses for the given date from the store.
   List<Expense> _getExpensesForDate(DateTime date, List<Expense> allExpenses) {

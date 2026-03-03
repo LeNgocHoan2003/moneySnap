@@ -14,7 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocaleController.instance.init();
   await CurrencyController.instance.init();
-  await Injection.init();
+  await init();
   await ThemeController.instance.init();
   runApp(const MainApp());
 }
