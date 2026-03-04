@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/utils/money_utils.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/expense.dart';
@@ -22,12 +23,10 @@ import '../widgets/dialogs/camera_permission_dialog.dart';
 class CaptureExpenseScreen extends StatefulWidget {
   const CaptureExpenseScreen({
     super.key,
-    required this.store,
     required this.onSaved,
     this.initialDate,
   });
 
-  final ExpenseStore store;
   final VoidCallback onSaved;
   /// Optional date to use for the saved expense (e.g. tapped day on calendar).
   final DateTime? initialDate;
@@ -37,6 +36,7 @@ class CaptureExpenseScreen extends StatefulWidget {
 }
 
 class _CaptureExpenseScreenState extends State<CaptureExpenseScreen> {
+  late final ExpenseStore _store = sl<ExpenseStore>();
   final _cameraService = CameraService();
   final _imageProcessingService = ImageProcessingService();
   
@@ -174,7 +174,7 @@ class _CaptureExpenseScreenState extends State<CaptureExpenseScreen> {
         amount: signedAmount,
         description: '',
       );
-      await widget.store.addExpense(expense);
+      await _store.addExpense(expense);
       
       if (!mounted) return;
       

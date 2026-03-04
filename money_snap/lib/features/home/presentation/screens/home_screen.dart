@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_snap/i18n/strings.g.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/router/app_router.dart';
@@ -13,18 +14,15 @@ enum _HomeTab { expenses, settings }
 
 /// Home screen with bottom tabs for expenses and settings.
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    super.key,
-    required this.store,
-  });
+  const HomeScreen({super.key});
 
-  final ExpenseStore store;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late final ExpenseStore _store = sl<ExpenseStore>();
   _HomeTab _selectedTab = _HomeTab.expenses;
 
   @override
@@ -57,7 +55,48 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: _buildBody(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_selectedTab == _HomeTab.expenses)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+                child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: colorScheme.outline.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.star_rounded,
+                      size: 20,
+                      color: colorScheme.primary.withOpacity(0.9),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        context.t.homeUsageGuide,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant.withOpacity(
+                            isDark ? 0.6 : 0.7,
+                          ),
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ),
+          Expanded(child: _buildBody()),
+        ],
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: navBgColor,
@@ -105,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBody() {
     switch (_selectedTab) {
       case _HomeTab.expenses:
-        return ExpenseListScreen(store: widget.store);
+        return ExpenseListScreen(store: _store);
       case _HomeTab.settings:
         return const SettingsScreen();
     }
