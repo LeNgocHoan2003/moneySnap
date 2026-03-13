@@ -1,5 +1,6 @@
 import 'package:mobx/mobx.dart';
 
+import '../../../../core/widget/home_widget_service.dart';
 import '../../domain/entities/expense.dart';
 import '../../domain/usecases/add_expense_usecase.dart';
 import '../../domain/usecases/delete_expense_usecase.dart';
@@ -43,6 +44,7 @@ abstract class _ExpenseStore with Store {
       final list = await _getExpensesUseCase();
       expenses.clear();
       expenses.addAll(list);
+      await updateHomeWidgetWithTodayExpenses(expenses);
     } finally {
       isLoading = false;
     }
@@ -52,17 +54,17 @@ abstract class _ExpenseStore with Store {
   Future<void> deleteExpense(String id) async {
     await _deleteExpenseUseCase(id);
     expenses.removeWhere((e) => e.id == id);
+    await updateHomeWidgetWithTodayExpenses(expenses);
   }
 
   @action
   Future<void> updateExpense(Expense expense) async {
     await _addExpenseUseCase(expense);
-    // Update the local observable list directly for better performance
     final index = expenses.indexWhere((e) => e.id == expense.id);
     if (index != -1) {
       expenses[index] = expense;
+      await updateHomeWidgetWithTodayExpenses(expenses);
     } else {
-      // If expense not found locally, reload all expenses
       await loadExpenses();
     }
   }
